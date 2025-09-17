@@ -20,21 +20,18 @@
       <p class="menu-sub">Choose Your Adventure</p>
       <div class="menu-buttons">
         <button class="menu-btn" data-game="leaf-catch">
-          <img src="Assets/final leaf.png" alt="Leaf Me Alone" class="menu-icon">
+          <img src="Assets/leaf.gif" alt="Leaf Me Alone" class="menu-icon">
           Leaf Me Alone 🍁
         </button>
         <button class="menu-btn" data-game="pumpkin-toss">
-          <img src="Assets/pumpkin.avif" alt="Pumpkin Dunkin" class="menu-icon">
+          <img src="Assets/pumpkin.gif" alt="Pumpkin Dunkin" class="menu-icon">
           Pumpkin Dunkin 🎃
         </button>
         <button class="menu-btn" data-game="cozy-cat-nap">
-          <img src="Assets/cat.png" alt="Cozy Cat Nap" class="menu-icon">
-          Cozy Cat Nap 😴
+          <img src="Assets/cat.gif" alt="Cozy Cat Nap" class="menu-icon">
+          Pawc-Man 😴
         </button>
-        <button class="menu-btn" data-game="coming-soon" disabled>
-          <img src="Assets/clock.png" alt="Coming Soon" class="menu-icon">
-          Time Trial (Coming Soon)
-        </button>
+       
       </div>
     </section>
 
@@ -59,7 +56,7 @@
           // Show loading splash
           const splash = document.createElement('div');
           splash.id = 'loadingSplash';
-          splash.textContent = loadingMessages[game] || 'Loading…';
+          splash.textContent = loadingMessages[game] || 'Loading Fall…';
           splash.style = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);';
           document.body.appendChild(splash);
 
@@ -68,6 +65,7 @@
             document.body.removeChild(splash);
             if (game === 'leaf-catch') window.location = 'leaf/game.html';
             else if (game === 'pumpkin-toss') window.location = 'pumpkin/pumpkin.html';
+            else if (game === 'cozy-cat-nap') window.location = 'catnap/catnap.html';
             else alert('Coming soon');
           }, 1500); // 1.5 seconds delay
         });
