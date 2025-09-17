@@ -7,7 +7,7 @@ Catch falling autumn leaves with your basket and rack up points — but don’t 
 
 ## 🎮 Demo
 
-![Gameplay Demo]((assets/Screenshot.gif)  
+![Leaf Me Alone Demo](assets/screenshots.gif)
 
 Live version: *(if hosted on GitHub Pages, add link here)*  
 
