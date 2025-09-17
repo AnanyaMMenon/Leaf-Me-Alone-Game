@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Simple basketball hoop + backboard icon -->
+  <rect x="140" y="10" width="44" height="80" rx="2" ry="2" fill="#ffffff" stroke="#cfcfcf" stroke-width="2"/>
+  <rect x="28" y="62" width="132" height="36" rx="6" ry="6" fill="#9b4f4f" stroke="#6b2f2f" stroke-width="3"/>
+  <!-- rim -->
+  <ellipse cx="94" cy="80" rx="44" ry="8" fill="#c0392b" />
+  <!-- net lines -->
+  <g stroke="#fff" stroke-width="2" fill="none">
+    <path d="M60,86 q16,12 34,0"/>
+    <path d="M74,92 q10,10 20,0"/>
+    <path d="M54,86 q20,26 40,0"/>
+  </g>
+</svg>

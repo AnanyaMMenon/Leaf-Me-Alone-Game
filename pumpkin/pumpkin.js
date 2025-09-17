@@ -1,22 +1,26 @@
-// Pumpkin Toss - a second mini-game
-// Controls: click/tap to throw a pumpkin from bottom toward click position
-// Throw arc is simulated. Different baskets give different points.
-// Occasionally a squirrel runs across and steals a pumpkin.
-
+// Pumpkin Toss (now: Pumpkin Hoops) - basketball-style mini-game
 const canvasP = document.getElementById('gameCanvas');
 const ctxP = canvasP.getContext('2d');
 
-let runningPumpkin = false;
+let running = false;
 let pumpkins = [];
-let baskets = [];
-let scorePumpkin = 0;
-let livesPumpkin = 3;
-let squirrel = null;
-let lastSquirrelTime = 0;
-let squirrelInterval = 8000 + Math.random() * 8000;
+let score = 0;
+let hoop = null; // {x,y,r,backboard}
+let previewPath = [];
+let confettiLocal = [];
 
-// small local confetti for pumpkin page
-const confettiLocal = [];
+// aiming state
+let aiming = false;
+let aimStart = null; // {x,y}
+let aimCurrent = null;
+let chargeStart = 0;
+
+let currentPumpkin = null; // Track the single active pumpkin
+let clickCount = 0; // Track the number of clicks to adjust angle
+
+let rolling = true; // Track if the pumpkin is rolling
+let clickIntensity = 0; // Accumulate click intensity
+
 function spawnConfettiLocal(x, y, count = 20) {
   for (let i = 0; i < count; i++) {
     confettiLocal.push({ x, y, vx: (Math.random()-0.5)*4, vy: -2-Math.random()*3, life: 40+Math.random()*40, color: ['#f59e0b','#ef4444','#f97316'][Math.floor(Math.random()*3)] });
@@ -24,194 +28,266 @@ function spawnConfettiLocal(x, y, count = 20) {
 }
 function updateConfettiLocal() {
   for (let i = confettiLocal.length-1;i>=0;i--) {
-    const p = confettiLocal[i]; p.vy += 0.15; p.x += p.vx; p.y += p.vy; p.life--; if (p.life<=0) confettiLocal.splice(i,1);
+    const p = confettiLocal[i]; p.vy += 0.12; p.x += p.vx; p.y += p.vy; p.life--; if (p.life<=0) confettiLocal.splice(i,1);
   }
 }
 function drawConfettiLocal() {
-  confettiLocal.forEach(p => { ctxP.fillStyle = p.color; ctxP.beginPath(); ctxP.ellipse(p.x,p.y,4,3,0,0,Math.PI*2); ctxP.fill(); });
+  confettiLocal.forEach(p => { ctxP.fillStyle = p.color; ctxP.beginPath(); ctxP.ellipse(p.x,p.y,3,2,0,0,Math.PI*2); ctxP.fill(); });
 }
 
-function initPumpkinBaskets() {
-  baskets = [
-    { x: 40, y: canvasP.height - 70, w: 90, h: 50, points: 1, color: '#8b5e3c' },
-    { x: canvasP.width/2 - 60, y: canvasP.height - 110, w: 120, h: 60, points: 3, color: '#6b3f1a' },
-    { x: canvasP.width - 140, y: canvasP.height - 70, w: 100, h: 52, points: 2, color: '#7a4a2b' }
-  ];
+function initHoop() {
+  // center-right hoop placement
+  const x = canvasP.width * 0.75;
+  const y = canvasP.height * 0.35;
+  hoop = { x, y, r: 22, rimWidth: 4 };
+  // try to load a hoop image from Assets: prefer basket.webp if present, fall back to SVG
+  if (!window._pumpkinHoopImg && !window._pumpkinHoopTried) {
+    window._pumpkinHoopTried = true;
+    const img = new Image();
+    img.onload = () => { window._pumpkinHoopImg = img; };
+    img.onerror = () => {
+      // try svg fallback
+      const img2 = new Image();
+      img2.onload = () => { window._pumpkinHoopImg = img2; };
+      img2.onerror = () => { window._pumpkinHoopImg = null; };
+      img2.src = '../Assets/basketball_hoop.svg';
+    };
+    img.src = '../Assets/basket.webp';
+  }
 }
 
 function Pumpkin(x, y, vx, vy) {
-  this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.r = 14; this.alive = true; this.thrown = true;
+  this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.r = 12; this.alive = true; this.scored = false;
+  // thrown: whether this pumpkin is currently flying toward the hoop
+  this.thrown = !!vx || !!vy; // if initial vx/vy given, consider thrown
   this.update = function() {
     if (!this.alive) return;
-    this.vy += 0.35; // gravity
+    // Apply gravity
+    this.vy += 0.28; // Gravity value
+
+    // Update position
     this.x += this.vx;
     this.y += this.vy;
-    // ground check
-    if (this.y > canvasP.height + 50) {
+
+    // Bounce off the ground
+    if (this.y > canvasP.height - this.r) {
+      this.y = canvasP.height - this.r;
+      this.vy *= -0.6; // Reduce velocity to simulate energy loss
+    }
+
+    // Bounce off the walls
+    if (this.x < this.r || this.x > canvasP.width - this.r) {
+      this.vx *= -1; // Reverse horizontal velocity
+      this.x = Math.max(this.r, Math.min(this.x, canvasP.width - this.r));
+    }
+
+    // Mark as dead if it goes out of bounds
+    if (this.y > canvasP.height + 30 || this.x < -30 || this.x > canvasP.width + 30) {
       this.alive = false;
-      livesPumpkin -= 1;
-      if (livesPumpkin <= 0) stopPumpkinGame();
     }
   };
   this.draw = function() {
     if (!this.alive) return;
+    // pumpkin body
     ctxP.save();
     ctxP.fillStyle = '#ff7f11';
     ctxP.beginPath();
-    ctxP.ellipse(this.x, this.y, this.r, this.r*0.85, 0, 0, Math.PI*2);
+    ctxP.ellipse(this.x, this.y, this.r, this.r*0.9, 0, 0, Math.PI*2);
     ctxP.fill();
     // stem
     ctxP.fillStyle = '#3b2b1b';
-    ctxP.fillRect(this.x - 2, this.y - this.r - 6, 4, 8);
+    ctxP.fillRect(this.x - 2, this.y - this.r - 6, 4, 6);
     ctxP.restore();
   };
 }
 
-function spawnSquirrel() {
-  squirrel = {
-    x: -60,
-    y: canvasP.height - 140,
-    vx: 3 + Math.random()*2,
-    w: 60,
-    h: 40,
-    active: true
-  };
+function launchPumpkinToHoop(p) {
+  if (!p || p.thrown || !hoop) return;
+  // time estimation based on horizontal distance
+  const dx = hoop.x - p.x;
+  const dy = hoop.y - p.y;
+  const dist = Math.hypot(dx, dy);
+  // choose travel time between 0.7s and 1.4s depending on distance
+  const t = Math.max(0.7, Math.min(1.4, dist / 300));
+  const g = 0.28; // gravity used in update
+  const vx = dx / t;
+  const vy = (dy - 0.5 * g * t * t) / t;
+  p.vx = vx; p.vy = vy; p.thrown = true;
 }
 
-function updateSquirrel() {
-  if (!squirrel || !squirrel.active) return;
-  squirrel.x += squirrel.vx;
-  // if squirrel crosses, check for collision with pumpkins
-  for (let i = pumpkins.length-1;i>=0;i--) {
-    const p = pumpkins[i];
-    if (!p.alive) continue;
-    if (p.x > squirrel.x && p.x < squirrel.x + squirrel.w && p.y > squirrel.y && p.y < squirrel.y + squirrel.h) {
-      // squirrel steals pumpkin
-      p.alive = false;
-      // visual nibble
-      try { spawnConfettiLocal(p.x, p.y, 12); } catch(e){}
-    }
-  }
-  if (squirrel.x > canvasP.width + 80) {
-    squirrel.active = false;
-    squirrel = null;
-    lastSquirrelTime = Date.now();
-    squirrelInterval = 8000 + Math.random()*9000;
-  }
+function launchPumpkinWithClicks(p, clicks) {
+  if (!p || p.thrown || !hoop) return;
+  launchPumpkinToHoop(p);
+  // increase vertical component (more negative = higher arc) per click
+  p.vy -= (clicks || 0) * 1.6;
+  // reduce horizontal speed slightly with more clicks so arc is steeper
+  p.vx *= Math.max(0.35, 1 - (clicks || 0) * 0.12);
 }
 
-function drawSquirrel() {
-  if (!squirrel || !squirrel.active) return;
+function drawHoop() {
+  if (!hoop) return;
+  // if we have an image loaded, draw it scaled at the hoop position
+  if (window._pumpkinHoopImg) {
+    const img = window._pumpkinHoopImg;
+    // desired display size - adjust to fit canvas
+    const displayW = Math.min(140, canvasP.width * 0.4);
+    const displayH = displayW * (img.height / img.width);
+    ctxP.drawImage(img, hoop.x - displayW/2, hoop.y - displayH/2, displayW, displayH);
+    return;
+  }
+  // fallback drawing
   ctxP.save();
-  ctxP.fillStyle = '#6b4b3b';
+  // backboard
+  ctxP.fillStyle = '#ffffff';
+  ctxP.fillRect(hoop.x + 34, hoop.y - 48, 10, 96);
+  ctxP.strokeStyle = '#bbbbbb';
+  ctxP.strokeRect(hoop.x + 34, hoop.y - 48, 10, 96);
+  // rim
+  ctxP.fillStyle = '#c0392b';
   ctxP.beginPath();
-  ctxP.ellipse(squirrel.x + 24, squirrel.y + 20, 20, 14, 0, 0, Math.PI*2);
-  ctxP.fill();
-  // tail
-  ctxP.fillStyle = '#4b3628';
-  ctxP.beginPath();
-  ctxP.ellipse(squirrel.x + 44, squirrel.y + 6, 12, 20, -0.4, 0, Math.PI*2);
-  ctxP.fill();
+  ctxP.arc(hoop.x, hoop.y, hoop.r, 0, Math.PI*2);
+  ctxP.lineWidth = hoop.rimWidth;
+  ctxP.strokeStyle = '#c0392b';
+  ctxP.stroke();
+  // net (simple lines)
+  ctxP.strokeStyle = 'rgba(255,255,255,0.9)';
+  for (let i = -3; i <= 3; i++) {
+    ctxP.beginPath();
+    ctxP.moveTo(hoop.x + i*6, hoop.y + hoop.r - 2);
+    ctxP.quadraticCurveTo(hoop.x + i*6, hoop.y + hoop.r + 22, hoop.x + i*6, hoop.y + hoop.r + 34);
+    ctxP.stroke();
+  }
   ctxP.restore();
 }
 
-function drawBaskets() {
-  baskets.forEach(b => {
-    ctxP.save();
-    ctxP.fillStyle = b.color;
-    ctxP.fillRect(b.x, b.y, b.w, b.h);
-    // rim
-    ctxP.fillStyle = '#2b1b10';
-    ctxP.fillRect(b.x, b.y - 8, b.w, 8);
-    // points label
-    ctxP.fillStyle = '#fff9e6';
-    ctxP.font = '14px sans-serif';
-    ctxP.fillText('+' + b.points, b.x + 8, b.y + 20);
-    ctxP.restore();
-  });
+function checkHoopScore(p) {
+  // Adjusted scoring logic to make it easier
+  const dx = p.x - hoop.x;
+  const dy = p.y - hoop.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  // Increase the scoring radius and allow scoring from a wider range
+  if (!p.scored && dist < hoop.r + 10 && p.vy > 0) {
+    p.scored = true;
+    return true;
+  }
+  return false;
 }
 
-function pumpkinLoop() {
-  if (!runningPumpkin) return;
-  ctxP.clearRect(0,0,canvasP.width,canvasP.height);
-  // draw background via CSS; draw foreground elements
-  drawBaskets();
-  // spawn squirrel occasionally
-  if (!squirrel && Date.now() - lastSquirrelTime > squirrelInterval) spawnSquirrel();
-  updateSquirrel();
-  drawSquirrel();
+function drawHUD() {
+  ctxP.fillStyle = '#ffffff';
+  ctxP.font = '18px sans-serif';
+  ctxP.textAlign = 'left';
+  ctxP.fillText('Score: ' + score, 12, 28);
+}
 
-  for (let i = pumpkins.length-1;i>=0;i--) {
-    const p = pumpkins[i];
-    if (!p.alive) {
-      pumpkins.splice(i,1); continue;
-    }
-    p.update();
-    // collision with baskets
-    for (const b of baskets) {
-      if (p.x > b.x && p.x < b.x + b.w && p.y + p.r > b.y && p.y - p.r < b.y + b.h) {
-        // scored
-        p.alive = false;
-        scorePumpkin += b.points;
-        try { spawnConfettiLocal(p.x, p.y, 10); } catch(e){}
-      }
-    }
+let timeLeft = 180; // 3 minutes in seconds
+function drawTimer() {
+  ctxP.fillStyle = '#ffffff';
+  ctxP.font = '18px sans-serif';
+  ctxP.textAlign = 'right';
+  ctxP.fillText('Time: ' + Math.ceil(timeLeft) + 's', canvasP.width - 12, 28);
+}
+
+function updateTimer() {
+  if (!running) return;
+  timeLeft -= 1 / 60; // Decrease time by 1/60th of a second per frame
+  if (timeLeft <= 0) {
+    running = false;
+    ctxP.fillStyle = 'rgba(0,0,0,0.6)';
+    ctxP.fillRect(0, canvasP.height / 2 - 40, canvasP.width, 80);
+    ctxP.fillStyle = '#fff';
+    ctxP.font = '22px sans-serif';
+    ctxP.textAlign = 'center';
+    ctxP.fillText('Time Up! Score: ' + score, canvasP.width / 2, canvasP.height / 2 + 8);
   }
+}
 
-  pumpkins.forEach(p => p.draw());
+// Update the game loop to include the timer and bouncing mechanics
+function gameLoop() {
+  if (!running) return;
+  ctxP.clearRect(0, 0, canvasP.width, canvasP.height);
+
+  // Draw the hoop, HUD, and timer
+  drawHoop();
+  drawHUD();
+  drawTimer();
+
+  // Update and draw the pumpkin
+  for (let i = pumpkins.length - 1; i >= 0; i--) {
+    const p = pumpkins[i];
+    p.update();
+    if (checkHoopScore(p)) {
+      score += 2; // Increment score for a successful shot
+      spawnConfettiLocal(p.x, p.y, 18);
+      timeLeft = 10; // Reset the timer on a successful shot
+      pumpkins.splice(i, 1); // Remove the scored pumpkin
+      const x = canvasP.width / 2;
+      const y = canvasP.height - 48;
+      currentPumpkin = new Pumpkin(x, y, 0, 0);
+      pumpkins.push(currentPumpkin);
+    }
+    if (!p.alive) pumpkins.splice(i, 1);
+  }
+  pumpkins.forEach((p) => p.draw());
+
   drawConfettiLocal();
   updateConfettiLocal();
+  updateTimer();
 
-  // HUD
-  ctxP.fillStyle = '#ffffff';
-  ctxP.font = '16px sans-serif';
-  ctxP.fillText('Score: ' + scorePumpkin, 12, 22);
-  ctxP.fillText('Lives: ' + '❤'.repeat(livesPumpkin), 12, 42);
-
-  requestAnimationFrame(pumpkinLoop);
+  requestAnimationFrame(gameLoop);
 }
 
-// Player clicking to throw a pumpkin toward click position
-canvasP.addEventListener('click', (e) => {
-  if (!runningPumpkin) return;
-  const rect = canvasP.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  // spawn pumpkin near bottom center
-  const startX = canvasP.width / 2;
-  const startY = canvasP.height - 18;
-  // compute a simple ballistic arc: initial velocity derived from distance
-  const dx = mx - startX;
-  const dy = my - startY;
-  const vx = dx * 0.06 + (Math.random()-0.5)*1.2;
-  const vy = dy * 0.06 - 8 - Math.random()*2;
-  pumpkins.push(new Pumpkin(startX, startY, vx, vy));
+// input handling: click a floor pumpkin to launch it toward the hoop
+canvasP.addEventListener('pointerdown', (e) => {
+  if (!running || !currentPumpkin) return;
+
+  // Apply an upward force to the pumpkin on each tap
+  const jumpForce = -6; // Adjust this value for the desired jump height
+  currentPumpkin.vy = jumpForce;
+
+  // Add a slight horizontal force to simulate movement towards the hoop
+  const horizontalForce = 2; // Adjust this value for the desired horizontal speed
+  currentPumpkin.vx += horizontalForce;
 });
 
-function startPumpkin() {
-  runningPumpkin = true;
+// start/reset buttons wiring
+document.getElementById('startBtn').addEventListener('click', () => {
+  startGame();
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  resetGame();
+});
+document.getElementById('backBtn').addEventListener('click', () => {
+  // Navigate back to the main menu
+  window.location.href = '../index.html';
+});
+
+function startGame() {
+  running = true;
   pumpkins = [];
-  scorePumpkin = 0; livesPumpkin = 3;
-  initPumpkinBaskets();
-  lastSquirrelTime = Date.now();
-  squirrelInterval = 8000 + Math.random()*8000;
-  pumpkinLoop();
+  score = 0;
+  timeLeft = 180; // Reset timer to 3 minutes
+  initHoop();
+  confettiLocal = [];
+
+  // Place the initial pumpkin on the ground
+  const x = canvasP.width / 2;
+  const y = canvasP.height - 48;
+  currentPumpkin = new Pumpkin(x, y, 0, 0);
+  pumpkins.push(currentPumpkin);
+  gameLoop();
 }
 
-function resetPumpkin() {
-  runningPumpkin = false;
+function resetGame() {
+  running = false;
   pumpkins = [];
-  scorePumpkin = 0; livesPumpkin = 3;
-  ctxP.clearRect(0,0,canvasP.width,canvasP.height);
+  score = 0;
+  timeLeft = 180; // Reset timer to 3 minutes
+  ctxP.clearRect(0, 0, canvasP.width, canvasP.height);
 }
 
-function stopPumpkinGame() {
-  runningPumpkin = false;
-  // show game over message
-  ctxP.fillStyle = 'rgba(0,0,0,0.6)';
-  ctxP.fillRect(0, canvasP.height/2 - 28, canvasP.width, 56);
-  ctxP.fillStyle = '#fff';
-  ctxP.font = '20px sans-serif';
-  ctxP.textAlign = 'center';
-  ctxP.fillText('Game Over — Score: ' + scorePumpkin, canvasP.width/2, canvasP.height/2 + 6);
-}
+// expose some functions for compatibility
+window.startPumpkin = startGame;
+window.resetPumpkin = resetGame;
+
