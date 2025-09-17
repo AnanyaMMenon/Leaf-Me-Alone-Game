@@ -7,26 +7,57 @@
 </head>
 <body>
   <header class="site-header">
-    <h1>Leaf Me Alone 🍂</h1>
-    <div id="highscore">Highscore: 0</div>
-    <div id="hud">
+    <h1 id="appTitle">Fall Arcade</h1>
+    <div id="highscore" style="display:none">Highscore: 0</div>
+    <div id="hud" style="display:none">
       <span id="score">Score: 0 | Lives: ❤️❤️❤️</span>
     </div>
-    <button id="soundToggle" aria-pressed="true" title="Toggle sound">🔊</button>
+  <button id="soundToggle" aria-pressed="true" title="Toggle sound" style="display:none">🔊</button>
   </header>
 
   <main class="game-wrap">
-    <div class="game-panel">
-      <canvas id="gameCanvas" width="480" height="640"></canvas>
-      <div class="controls">
-        <button onclick="startGame()">▶ Start</button>
-        <button onclick="resetGame()">⟳ Reset</button>
-        <button onclick="stopGame()">✖ Quit</button>
+    <!-- Main menu (shown initially) -->
+    <section id="mainMenu" class="menu-panel">
+      <p class="menu-sub">Select a game to play</p>
+      <div class="menu-buttons">
+        <button class="menu-btn" data-game="leaf-catch">Leaf Catch</button>
+        <button class="menu-btn" data-game="pumpkin-toss">Pumpkin Toss 🎃</button>
+        <button class="menu-btn" data-game="pumpkin-toss">Cozy Cat Nap 😴 </button>
+        <button class="menu-btn" data-game="coming-soon" disabled>Time Trial (Coming soon)</button>
       </div>
-    </div>
+    </section>
+
+    <!-- Existing game panel (hidden until a game is selected) -->
+    <section id="gamePanel" class="game-panel hidden">
+      <div class="game-area">
+        <canvas id="gameCanvas" width="480" height="640"></canvas>
+        <div class="controls">
+            <button id="startBtn" onclick="startSelectedGame()">▶ Start</button>
+            <button id="resetBtn" onclick="resetSelectedGame()">↻ Reset</button>
+          <button id="quitBtn" onclick="quitToMenu()">✖ Back</button>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <script src="game.js"></script>
+  <script>
+    // menu navigation: go to game pages
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuButtons = document.querySelectorAll('.menu-btn');
+      menuButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const game = btn.getAttribute('data-game');
+          if (game === 'leaf-catch') window.location = 'leaf/game.html';
+          else if (game === 'pumpkin-toss') window.location = 'pumpkin/pumpkin.html';
+          else alert('Coming soon');
+        });
+      });
+      // ensure header shows 'Fall Arcade' on menu
+      try { document.getElementById('appTitle').textContent = 'Fall Arcade'; } catch(e){}
+      // hide HUD and sound on menu
+      try { document.getElementById('highscore').style.display = 'none'; document.getElementById('hud').style.display = 'none'; document.getElementById('soundToggle').style.display = 'none'; } catch(e){}
+    });
+  </script>
 </body>
 </html>
  

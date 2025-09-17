@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pumpkin Toss 🎃</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Pumpkin Toss 🎃</h1>
+  </header>
+
+  <main class="game-wrap">
+    <div class="game-panel">
+      <canvas id="gameCanvas" width="480" height="640"></canvas>
+      <div class="controls">
+        <button onclick="startPumpkin()">▶ Start</button>
+        <button onclick="resetPumpkin()">↻ Reset</button>
+        <button onclick="window.location='../index.html'">✖ Back</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="pumpkin.js"></script>
+</body>
+</html>

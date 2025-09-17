@@ -6,11 +6,11 @@ const HEIGHT = canvas.height;
 
 // preload leaf image (prefer the final leaf image if available)
 const leafImg = new Image();
-leafImg.src = 'Assets/final leaf.png';
+leafImg.src = '../Assets/final leaf.png';
 leafImg.onerror = () => {
   // try webp then jpg fallbacks
-  if (leafImg.src.indexOf('final leaf.png') !== -1) leafImg.src = 'Assets/leaf.webp';
-  else if (leafImg.src.indexOf('leaf.webp') !== -1) leafImg.src = 'Assets/leaff.jpg';
+  if (leafImg.src.indexOf('final leaf.png') !== -1) leafImg.src = '../Assets/leaf.webp';
+  else if (leafImg.src.indexOf('leaf.webp') !== -1) leafImg.src = '../Assets/leaff.jpg';
 };
 
 // background is handled by CSS (outside the canvas)
