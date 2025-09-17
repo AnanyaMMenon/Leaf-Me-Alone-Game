@@ -2,6 +2,41 @@
 const canvasP = document.getElementById('gameCanvas');
 const ctxP = canvasP.getContext('2d');
 
+// Simple WebAudio helpers for Pumpkin game SFX
+var _pumpkinAudioCtx = null;
+function ensureAudio() {
+  if (_pumpkinAudioCtx) return _pumpkinAudioCtx;
+  var AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return null;
+  _pumpkinAudioCtx = new AudioCtx();
+  return _pumpkinAudioCtx;
+}
+
+function playSwish() {
+  var ctx = ensureAudio(); if (!ctx) return;
+  var o = ctx.createOscillator(); var g = ctx.createGain(); var f = ctx.createBiquadFilter();
+  o.type = 'sine'; o.frequency.value = 900 + Math.random() * 220;
+  f.type = 'highpass'; f.frequency.value = 600;
+  o.connect(f); f.connect(g); g.connect(ctx.destination);
+  var now = ctx.currentTime; g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.28, now + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+  o.start(now); o.stop(now + 0.2);
+}
+
+function playBuzzer() {
+  var ctx = ensureAudio(); if (!ctx) return;
+  var o1 = ctx.createOscillator(); var o2 = ctx.createOscillator(); var g = ctx.createGain();
+  o1.type = 'square'; o2.type = 'sawtooth';
+  o1.frequency.value = 220; o2.frequency.value = 130;
+  o1.connect(g); o2.connect(g); g.connect(ctx.destination);
+  var now = ctx.currentTime;
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.18, now + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+  o1.start(now); o2.start(now); o1.stop(now + 0.9); o2.stop(now + 0.9);
+}
+
 let running = false;
 let pumpkins = [];
 let score = 0;
@@ -231,6 +266,8 @@ function updateTimer() {
     ctxP.font = '22px sans-serif';
     ctxP.textAlign = 'center';
     ctxP.fillText('Time Up! Score: ' + score, canvasP.width / 2, canvasP.height / 2 + 8);
+    // play buzzer sound on game over
+    try { playBuzzer(); } catch (e) {}
   }
 }
 
@@ -252,7 +289,8 @@ function gameLoop() {
       score += 2; // Increment score for a successful shot
       spawnConfettiLocal(p.x, p.y, 18);
       timeLeft = 10; // Reset the timer on a successful shot
-      pumpkins.splice(i, 1); // Remove the scored pumpkin
+        pumpkins.splice(i, 1); // Remove the scored pumpkin
+        try { playSwish(); } catch (e) {}
       const x = canvasP.width / 2;
       const y = canvasP.height - 48;
       currentPumpkin = new Pumpkin(x, y, 0, 0);

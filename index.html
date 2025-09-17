@@ -3,77 +3,423 @@
 <head>
   <meta charset="UTF-8">
   <title>Fall Arcade 🍂</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <!-- Fonts for cozy theme -->
+  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Merriweather:wght@300;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="style.css">
+ </head>
+ <body>
 
-  <header class="site-header">
+   <header class="site-header">
     <h1 id="appTitle">🍂 Fall Arcade 🍂</h1>
-  </header>
+    <!-- day/night toggle removed per user request -->
+   </header>
 
-  <main class="game-wrap">
-    <canvas id="bgCanvas"></canvas>
-    <div id="menu-container">
-      <!-- your existing Fall Arcade HTML -->
-    </div>
-    <section id="mainMenu" class="menu-panel">
-      <p class="menu-sub">Choose Your Adventure</p>
-      <div class="menu-buttons">
-        <button class="menu-btn" data-game="leaf-catch">
-          <img src="Assets/leaf.gif" alt="Leaf Me Alone" class="menu-icon">
-          Leaf Me Alone 🍁
-        </button>
-        <button class="menu-btn" data-game="pumpkin-toss">
-          <img src="Assets/pumpkin.gif" alt="Pumpkin Dunkin" class="menu-icon">
-          Pumpkin Dunkin 🎃
-        </button>
-        <button class="menu-btn" data-game="cozy-cat-nap">
-          <img src="Assets/cat.gif" alt="Cozy Cat Nap" class="menu-icon">
-          Pawc-Man 😴
-        </button>
-       
-      </div>
-    </section>
-
+   <main class="game-wrap">
+     <canvas id="bgCanvas"></canvas>
+     <div id="menu-container">
+      <!-- Landing intro screen -->
+      <section id="landing" class="landing-screen">
+        <div class="crawl-box">
+          <div class="crawl-container">
+            <div id="crawl" class="crawl">
+              <div class="crawl-content">
+                <p data-text="Welcome to the pumpkin patch arcade 🎃."></p>
+                <p data-text="Could this BE any cozier? ☕🍂."></p>
+                <p data-text="Press Enter before the squirrel steals your turn 🐿️."></p>
+              </div>
+            </div>
+          </div>
+        </div>
+  <button id="enterBtn" class="enter-btn" style="display:none" disabled>Enter the Arcade</button>
+        <!-- bottom squirrel chat bubble -->
+        <div id="bottomSquirrel" class="bottom-squirrel" aria-hidden="true">
+          <div class="squirrel-emoji">🐿️</div>
+          <div class="chat-bubble" id="squirrelBubble">Hi there! Ready for cozy games?</div>
+        </div>
+      </section>
+      <section id="mainMenu" class="menu-panel hidden">
+        <p class="menu-sub">Choose Your Adventure</p>
+        <div class="game-cards" aria-hidden="true">
+          <div class="game-card" data-game="leaf-catch">
+            <div class="card-icon">🍃</div>
+            <div class="card-title">Leaf Me Alone</div>
+          </div>
+          <div class="game-card" data-game="pumpkin-toss">
+            <div class="card-icon">🎃</div>
+            <div class="card-title no-break">Pumpkin Dunkin</div>
+          </div>
+          <div class="game-card" data-game="cozy-cat-nap">
+            <div class="card-icon">🐈</div>
+            <div class="card-title">Pawc-Man</div>
+          </div>
+        </div>
+      </section>
+     </div>
    
-  </main>
+
+   </main>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const menuButtons = document.querySelectorAll('.menu-btn');
-      menuButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const game = btn.getAttribute('data-game');
-          const loadingMessages = {
-            'leaf-catch': 'Sweeping leaves… 🍂',
-            'pumpkin-toss': 'Brewing pumpkin spice… ☕🎃'
-          };
-
-          // Hide game options block
-          const menuPanel = document.getElementById('mainMenu');
+    document.addEventListener('DOMContentLoaded', function () {
+      // game card clicks
+      document.querySelectorAll('.game-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+          var game = card.getAttribute('data-game');
+          var menuPanel = document.getElementById('mainMenu');
           menuPanel.style.display = 'none';
-
-          // Show loading splash
-          const splash = document.createElement('div');
+          var splash = document.createElement('div');
           splash.id = 'loadingSplash';
-          splash.textContent = loadingMessages[game] || 'Loading Fall…';
-          splash.style = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);';
+          var title = card.querySelector('.card-title') ? card.querySelector('.card-title').textContent : 'Game';
+          splash.textContent = 'Loading ' + title + '...';
+          splash.className = 'loading-splash';
           document.body.appendChild(splash);
-
-          // Navigate to the game after a short delay
-          setTimeout(() => {
+          setTimeout(function () {
             document.body.removeChild(splash);
             if (game === 'leaf-catch') window.location = 'leaf/game.html';
             else if (game === 'pumpkin-toss') window.location = 'pumpkin/pumpkin.html';
             else if (game === 'cozy-cat-nap') window.location = 'catnap/catnap.html';
             else alert('Coming soon');
-          }, 1500); // 1.5 seconds delay
+          }, 1200);
         });
       });
+
+      // day/night toggle removed
+
+        // Enter button shows the menu (landing -> menu)
+        var enterBtn = document.getElementById('enterBtn');
+        if (enterBtn) {
+          enterBtn.addEventListener('click', function () {
+            var landing = document.getElementById('landing');
+            var menu = document.getElementById('mainMenu');
+            if (landing) landing.classList.add('hidden');
+            if (menu) menu.classList.remove('hidden');
+          });
+        }
     });
   </script>
-  <script src="squirrel.js"></script>
-</body>
-</html>
 
+  <footer class="site-footer">🍁 Cozy vibes powered by fall 🍁</footer>
+  <!-- squirrel.js removed per request -->
+  <script>
+    // Typewriter effect for landing crawl + squirrel tail swish
+    (function () {
+      var crawlEl = document.getElementById('crawl');
+      var paragraphs = crawlEl ? crawlEl.querySelectorAll('.crawl-content p') : [];
+      var caret = document.createElement('span');
+      caret.className = 'typewriter-caret';
+
+      function typeParagraph(pEl, cb) {
+        var text = pEl.textContent.trim();
+        pEl.textContent = '';
+        pEl.appendChild(caret);
+        // ensure it's hidden until typed
+        pEl.classList.remove('visible');
+        var i = 0;
+        var speed = 28; // ms per character
+        function step() {
+          if (i < text.length) {
+            pEl.textContent = text.slice(0, i+1);
+            pEl.appendChild(caret);
+            i++;
+            setTimeout(step, speed);
+          } else {
+            pEl.removeChild(caret);
+            // reveal when fully typed
+            pEl.classList.add('visible');
+            if (cb) setTimeout(cb, 400);
+          }
+        }
+        step();
+      }
+
+      function runTypewriter() {
+        var idx = 0;
+        function next() {
+          if (idx >= paragraphs.length) return;
+          var el = paragraphs[idx];
+          typeParagraph(el, function () { idx++; next(); });
+        }
+        next();
+      }
+
+      // switch to crawler: start crawl animation and reveal paragraphs during the animation
+      if (paragraphs.length) {
+        var crawl = document.getElementById('crawl');
+        // make paragraphs hidden initially (already set in CSS)
+        // add animate class to start crawl
+        setTimeout(function () { crawl.classList.add('animate'); }, 200);
+
+        // WebAudio blip generator
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        var audioCtx = AudioCtx ? new AudioCtx() : null;
+        function blip() {
+          if (!audioCtx) return;
+          var o = audioCtx.createOscillator();
+          var g = audioCtx.createGain();
+          o.type = 'sine';
+          o.frequency.value = 880;
+          g.gain.value = 0.0001;
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          var now = audioCtx.currentTime;
+          g.gain.exponentialRampToValueAtTime(0.12, now + 0.01);
+          o.start(now);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+          o.stop(now + 0.18);
+        }
+
+        // split each paragraph into grapheme-aware spans and reveal sequentially
+        var charList = [];
+        // helper: iterate grapheme clusters using Intl.Segmenter when available
+        function splitGraphemes(text) {
+          if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+            var seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+            return Array.from(seg.segment(text), function (s) { return s.segment; });
+          }
+          // fallback: Array.from handles surrogate pairs reasonably well
+          return Array.from(text);
+        }
+
+        paragraphs.forEach(function (p) {
+          var text = p.getAttribute('data-text') || p.textContent || '';
+          p.textContent = '';
+          var pieces = splitGraphemes(text);
+          for (var j = 0; j < pieces.length; j++) {
+            var ch = pieces[j];
+            var span = document.createElement('span');
+            if (ch === ' ') {
+              span.className = 'char space';
+              span.textContent = '\u00A0';
+            } else {
+              span.className = 'char';
+              span.textContent = ch;
+            }
+            p.appendChild(span);
+            charList.push(span);
+          }
+        });
+
+        var total = 6000; // faster total duration for all letters (ms)
+        var interval = Math.max(12, Math.floor(total / Math.max(1, charList.length)));
+        // reveal letters sequentially
+        charList.forEach(function (cspan, idx) {
+          setTimeout(function () { cspan.classList.add('visible'); if (idx % 6 === 0) blip(); }, interval * idx + 120);
+        });
+
+        // after all letters revealed, show Enter with fade/slide
+        var totalChars = Math.max(1, charList.length);
+        var revealDuration = interval * totalChars + 120;
+        setTimeout(function () {
+          var enter = document.getElementById('enterBtn');
+          if (enter) {
+            enter.style.display = '';
+            enter.disabled = false;
+            enter.classList.add('fade-in');
+            enter.focus();
+          }
+        }, revealDuration + 120);
+      }
+
+      // make the bottom squirrel swish tail periodically and cycle messages
+      var sq = document.querySelector('.squirrel-emoji');
+      var bubble = document.getElementById('squirrelBubble');
+      var messages = [
+        'Hi there! Ready for cozy games?',
+        'Tip: Pumpkins make good high scores 🎃',
+        'Collect acorns for a crunchy bonus!',
+        'Don’t let the cat nap on the controller 😸'
+      ];
+      var mIdx = 0;
+      function showMessage(i) {
+        if (bubble) bubble.textContent = messages[i % messages.length];
+      }
+      if (sq) {
+        sq.classList.add('squirrel-move');
+        setInterval(function () {
+          sq.classList.add('squirrel-swish');
+          setTimeout(function () { sq.classList.remove('squirrel-swish'); }, 900);
+          // advance message a bit later
+          mIdx = (mIdx + 1) % messages.length;
+          showMessage(mIdx);
+        }, 4000);
+        // click to advance message, swish and play a click sound
+        if (bubble) {
+          bubble.addEventListener('click', function () {
+            mIdx = (mIdx + 1) % messages.length;
+            showMessage(mIdx);
+            sq.classList.add('squirrel-swish');
+            setTimeout(function () { sq.classList.remove('squirrel-swish'); }, 700);
+            // small click blip
+            if (audioCtx) {
+              var o = audioCtx.createOscillator();
+              var g = audioCtx.createGain();
+              o.type = 'square';
+              o.frequency.value = 660;
+              g.gain.value = 0.0001;
+              o.connect(g);
+              g.connect(audioCtx.destination);
+              var now = audioCtx.currentTime;
+              g.gain.exponentialRampToValueAtTime(0.12, now + 0.005);
+              o.start(now);
+              g.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+              o.stop(now + 0.12);
+            }
+          });
+        }
+      }
+    })();
+  </script>
+  <script>
+    // Ambient and SFX audio manager (WebAudio)
+    (function () {
+      var manager = (function () {
+        var ctx = null;
+        var noiseBuf = null;
+        var ambientGain = null;
+        var noiseSrc = null;
+        var lfo = null;
+        var rustleTimer = null;
+
+        function ensureContext() {
+          if (ctx) return;
+          var AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return;
+          ctx = new AudioCtx();
+
+          // create a short noise buffer
+          var bufferSize = ctx.sampleRate * 1; // 1 second
+          noiseBuf = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          var data = noiseBuf.getChannelData(0);
+          for (var i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.25;
+
+          // ambient chain
+          ambientGain = ctx.createGain();
+          ambientGain.gain.value = 0.0001; // start quiet
+          ambientGain.connect(ctx.destination);
+
+          // continuous lowpassed noise as base texture
+          noiseSrc = ctx.createBufferSource();
+          noiseSrc.buffer = noiseBuf;
+          noiseSrc.loop = true;
+          var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400;
+          var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 400; bp.Q.value = 0.8;
+          noiseSrc.connect(lp);
+          lp.connect(bp);
+          bp.connect(ambientGain);
+          noiseSrc.start(0);
+
+          // slow LFO to modulate ambient amplitude
+          lfo = ctx.createOscillator();
+          lfo.type = 'sine';
+          lfo.frequency.value = 0.06 + Math.random() * 0.02;
+          var lfoGain = ctx.createGain();
+          lfoGain.gain.value = 0.02;
+          lfo.connect(lfoGain);
+          lfoGain.connect(ambientGain.gain);
+          lfo.start(0);
+
+          // rustle scheduler
+          rustleTimer = setInterval(function () {
+            if (Math.random() < 0.6) leafRustle();
+          }, 1200 + Math.random() * 800);
+        }
+
+        function leafRustle() {
+          if (!ctx || !noiseBuf) return;
+          var src = ctx.createBufferSource();
+          src.buffer = noiseBuf;
+          var fil = ctx.createBiquadFilter(); fil.type = 'bandpass'; fil.frequency.value = 1800 + Math.random() * 2400; fil.Q.value = 1.2;
+          var g = ctx.createGain(); g.gain.value = 0.0001;
+          src.connect(fil);
+          fil.connect(g);
+          g.connect(ctx.destination);
+          var now = ctx.currentTime;
+          // quick envelope
+          g.gain.exponentialRampToValueAtTime(0.14 + Math.random() * 0.08, now + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + 0.45 + Math.random() * 0.6);
+          src.start(now);
+          src.stop(now + 1.2);
+        }
+
+        function startAmbient() {
+          if (!ctx) ensureContext();
+          if (!ctx) return;
+          ambientGain.gain.cancelScheduledValues(ctx.currentTime);
+          ambientGain.gain.setValueAtTime(ambientGain.gain.value || 0.0001, ctx.currentTime);
+          ambientGain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 2.5);
+        }
+
+        function stopAmbient() {
+          if (!ctx) return;
+          ambientGain.gain.cancelScheduledValues(ctx.currentTime);
+          ambientGain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 1.0);
+        }
+
+        function playHover() {
+          if (!ctx) ensureContext(); if (!ctx) return;
+          var o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = 720 + Math.random() * 220;
+          var g = ctx.createGain(); g.gain.value = 0.0001;
+          o.connect(g); g.connect(ctx.destination);
+          var now = ctx.currentTime;
+          g.gain.exponentialRampToValueAtTime(0.06, now + 0.006);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+          o.start(now); o.stop(now + 0.18);
+        }
+
+        function playClick() {
+          if (!ctx) ensureContext(); if (!ctx) return;
+          var src = ctx.createBufferSource(); src.buffer = noiseBuf;
+          var fil = ctx.createBiquadFilter(); fil.type = 'highpass'; fil.frequency.value = 900;
+          var g = ctx.createGain(); g.gain.value = 0.0001;
+          src.connect(fil); fil.connect(g); g.connect(ctx.destination);
+          var now = ctx.currentTime;
+          g.gain.exponentialRampToValueAtTime(0.26, now + 0.004);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+          src.start(now); src.stop(now + 0.18);
+        }
+
+        return {
+          init: ensureContext,
+          startAmbient: startAmbient,
+          stopAmbient: stopAmbient,
+          hover: playHover,
+          click: playClick
+        };
+      })();
+
+      // resume/init audio on user gesture (Enter click or any first pointerdown)
+      function ensureAndStart() {
+        try {
+          manager.init();
+          // resume context if suspended (some browsers)
+          if (window.AudioContext || window.webkitAudioContext) {
+            var C = window.AudioContext || window.webkitAudioContext;
+            // if AudioContext exists on window it may be created inside manager
+          }
+        } catch (e) { /* ignore */ }
+      }
+
+      // Hook Enter button to start ambient when user enters the menu
+      var enterBtn = document.getElementById('enterBtn');
+      if (enterBtn) {
+        enterBtn.addEventListener('click', function (ev) {
+          ensureAndStart();
+          try { manager.startAmbient(); } catch (e) {}
+        });
+      }
+
+      // Also initialize audio when user first interacts anywhere (pointerdown)
+      var firstGesture = function () { ensureAndStart(); document.removeEventListener('pointerdown', firstGesture); };
+      document.addEventListener('pointerdown', firstGesture);
+
+      // Add hover/click SFX on game cards
+      document.querySelectorAll('.game-card').forEach(function (card) {
+        card.addEventListener('mouseenter', function () { try { manager.hover(); } catch (e) {} });
+        card.addEventListener('click', function () { try { manager.click(); } catch (e) {} });
+      });
+
+    })();
+  </script>
+  </body>
+  </html>
 
