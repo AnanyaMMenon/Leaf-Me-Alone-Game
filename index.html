@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Leaf Me Alone🍂</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Leaf Me Alone 🍂</h1>
+    <div id="highscore">Highscore: 0</div>
+    <div id="hud">
+      <span id="score">Score: 0 | Lives: ❤️❤️❤️</span>
+    </div>
+    <button id="soundToggle" aria-pressed="true" title="Toggle sound">🔊</button>
+  </header>
+
+  <main class="game-wrap">
+    <div class="game-panel">
+      <canvas id="gameCanvas" width="480" height="640"></canvas>
+      <div class="controls">
+        <button onclick="startGame()">▶ Start</button>
+        <button onclick="resetGame()">⟳ Reset</button>
+        <button onclick="stopGame()">✖ Quit</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
+ 
+
