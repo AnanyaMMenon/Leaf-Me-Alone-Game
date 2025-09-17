@@ -2,63 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Leaf Me Alone🍂</title>
+  <title>Fall Arcade 🍂</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <header class="site-header">
-    <h1 id="appTitle">Fall Arcade</h1>
-    <div id="highscore" style="display:none">Highscore: 0</div>
-    <div id="hud" style="display:none">
-      <span id="score">Score: 0 | Lives: ❤️❤️❤️</span>
-    </div>
-  <button id="soundToggle" aria-pressed="true" title="Toggle sound" style="display:none">🔊</button>
+    <h1 id="appTitle">🍂 Fall Arcade 🍂</h1>
   </header>
 
   <main class="game-wrap">
-    <!-- Main menu (shown initially) -->
+    <canvas id="bgCanvas"></canvas>
+    <div id="menu-container">
+      <!-- your existing Fall Arcade HTML -->
+    </div>
     <section id="mainMenu" class="menu-panel">
-      <p class="menu-sub">Select a game to play</p>
+      <p class="menu-sub">Choose Your Adventure</p>
       <div class="menu-buttons">
-        <button class="menu-btn" data-game="leaf-catch">Leaf Me Alone 🍁 </button>
-        <button class="menu-btn" data-game="pumpkin-toss">Pumpkin Dunkin🎃</button>
-        <button class="menu-btn" data-game="pumpkin-toss">Cozy Cat Nap 😴 </button>
-        <button class="menu-btn" data-game="coming-soon" disabled>Time Trial (Coming soon)</button>
+        <button class="menu-btn" data-game="leaf-catch">
+          <img src="Assets/final leaf.png" alt="Leaf Me Alone" class="menu-icon">
+          Leaf Me Alone 🍁
+        </button>
+        <button class="menu-btn" data-game="pumpkin-toss">
+          <img src="Assets/pumpkin.avif" alt="Pumpkin Dunkin" class="menu-icon">
+          Pumpkin Dunkin 🎃
+        </button>
+        <button class="menu-btn" data-game="cozy-cat-nap">
+          <img src="Assets/cat.png" alt="Cozy Cat Nap" class="menu-icon">
+          Cozy Cat Nap 😴
+        </button>
+        <button class="menu-btn" data-game="coming-soon" disabled>
+          <img src="Assets/clock.png" alt="Coming Soon" class="menu-icon">
+          Time Trial (Coming Soon)
+        </button>
       </div>
     </section>
 
-    <!-- Existing game panel (hidden until a game is selected) -->
-    <section id="gamePanel" class="game-panel hidden">
-      <div class="game-area">
-        <canvas id="gameCanvas" width="480" height="640"></canvas>
-        <div class="controls">
-            <button id="startBtn" onclick="startSelectedGame()">▶ Start</button>
-            <button id="resetBtn" onclick="resetSelectedGame()">↻ Reset</button>
-          <button id="quitBtn" onclick="quitToMenu()">✖ Back</button>
-        </div>
-      </div>
-    </section>
+   
   </main>
 
   <script>
-    // menu navigation: go to game pages
     document.addEventListener('DOMContentLoaded', () => {
       const menuButtons = document.querySelectorAll('.menu-btn');
       menuButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           const game = btn.getAttribute('data-game');
-          if (game === 'leaf-catch') window.location = 'leaf/game.html';
-          else if (game === 'pumpkin-toss') window.location = 'pumpkin/pumpkin.html';
-          else alert('Coming soon');
+          const loadingMessages = {
+            'leaf-catch': 'Sweeping leaves… 🍂',
+            'pumpkin-toss': 'Brewing pumpkin spice… ☕🎃'
+          };
+
+          // Hide game options block
+          const menuPanel = document.getElementById('mainMenu');
+          menuPanel.style.display = 'none';
+
+          // Show loading splash
+          const splash = document.createElement('div');
+          splash.id = 'loadingSplash';
+          splash.textContent = loadingMessages[game] || 'Loading…';
+          splash.style = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);';
+          document.body.appendChild(splash);
+
+          // Navigate to the game after a short delay
+          setTimeout(() => {
+            document.body.removeChild(splash);
+            if (game === 'leaf-catch') window.location = 'leaf/game.html';
+            else if (game === 'pumpkin-toss') window.location = 'pumpkin/pumpkin.html';
+            else alert('Coming soon');
+          }, 1500); // 1.5 seconds delay
         });
       });
-      // ensure header shows 'Fall Arcade' on menu
-      try { document.getElementById('appTitle').textContent = 'Fall Arcade'; } catch(e){}
-      // hide HUD and sound on menu
-      try { document.getElementById('highscore').style.display = 'none'; document.getElementById('hud').style.display = 'none'; document.getElementById('soundToggle').style.display = 'none'; } catch(e){}
     });
   </script>
+  <script src="squirrel.js"></script>
 </body>
 </html>
- 
+
 

@@ -21,6 +21,15 @@ let clickCount = 0; // Track the number of clicks to adjust angle
 let rolling = true; // Track if the pumpkin is rolling
 let clickIntensity = 0; // Accumulate click intensity
 
+// Load highscore from localStorage
+let highscore = 0;
+try {
+  const stored = localStorage.getItem('pumpkin_highscore');
+  if (stored) highscore = parseInt(stored, 10) || 0;
+} catch (e) {
+  // ignore
+}
+
 function spawnConfettiLocal(x, y, count = 20) {
   for (let i = 0; i < count; i++) {
     confettiLocal.push({ x, y, vx: (Math.random()-0.5)*4, vy: -2-Math.random()*3, life: 40+Math.random()*40, color: ['#f59e0b','#ef4444','#f97316'][Math.floor(Math.random()*3)] });
@@ -58,45 +67,56 @@ function initHoop() {
 
 function Pumpkin(x, y, vx, vy) {
   this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.r = 12; this.alive = true; this.scored = false;
-  // thrown: whether this pumpkin is currently flying toward the hoop
   this.thrown = !!vx || !!vy; // if initial vx/vy given, consider thrown
+
   this.update = function() {
     if (!this.alive) return;
-    // Apply gravity
-    this.vy += 0.28; // Gravity value
+    if (this.thrown) {
+      this.vy += 0.28; // gravity
+      this.vx *= 0.999; // slight air drag
+      this.x += this.vx;
+      this.y += this.vy;
 
-    // Update position
-    this.x += this.vx;
-    this.y += this.vy;
+      // Bounce off the ground
+      if (this.y > canvasP.height - this.r) {
+        this.y = canvasP.height - this.r;
+        this.vy *= -0.6; // Reverse velocity and reduce it to simulate energy loss
+      }
 
-    // Bounce off the ground
-    if (this.y > canvasP.height - this.r) {
-      this.y = canvasP.height - this.r;
-      this.vy *= -0.6; // Reduce velocity to simulate energy loss
-    }
-
-    // Bounce off the walls
-    if (this.x < this.r || this.x > canvasP.width - this.r) {
-      this.vx *= -1; // Reverse horizontal velocity
-      this.x = Math.max(this.r, Math.min(this.x, canvasP.width - this.r));
-    }
-
-    // Mark as dead if it goes out of bounds
-    if (this.y > canvasP.height + 30 || this.x < -30 || this.x > canvasP.width + 30) {
-      this.alive = false;
+      // Bounce off the walls
+      if (this.x < this.r || this.x > canvasP.width - this.r) {
+        this.vx *= -0.6; // Reverse horizontal velocity and reduce it
+        this.x = Math.max(this.r, Math.min(this.x, canvasP.width - this.r));
+      }
+    } else {
+      this.vx = 0; this.vy = 0;
+      this.y = canvasP.height - 48;
     }
   };
+
   this.draw = function() {
     if (!this.alive) return;
-    // pumpkin body
     ctxP.save();
+
+    // Draw pumpkin body
     ctxP.fillStyle = '#ff7f11';
     ctxP.beginPath();
-    ctxP.ellipse(this.x, this.y, this.r, this.r*0.9, 0, 0, Math.PI*2);
+    ctxP.ellipse(this.x, this.y, this.r, this.r * 0.9, 0, 0, Math.PI * 2);
     ctxP.fill();
-    // stem
-    ctxP.fillStyle = '#3b2b1b';
+
+    // Add pumpkin ridges
+    ctxP.strokeStyle = '#de6f0fff';
+    ctxP.lineWidth = 1.5;
+    for (let i = -2; i <= 2; i++) {
+      ctxP.beginPath();
+      ctxP.ellipse(this.x, this.y, this.r + i, this.r * 0.9, 0, 0, Math.PI * 2);
+      ctxP.stroke();
+    }
+
+    // Draw pumpkin stem
+    ctxP.fillStyle = '#03824bff';
     ctxP.fillRect(this.x - 2, this.y - this.r - 6, 4, 6);
+
     ctxP.restore();
   };
 }
@@ -174,11 +194,22 @@ function checkHoopScore(p) {
   return false;
 }
 
-function drawHUD() {
+function updateHUD() {
   ctxP.fillStyle = '#ffffff';
   ctxP.font = '18px sans-serif';
   ctxP.textAlign = 'left';
   ctxP.fillText('Score: ' + score, 12, 28);
+  ctxP.fillText('Highscore: ' + highscore, 12, 52);
+
+  // Update highscore if the current score exceeds it
+  if (score > highscore) {
+    highscore = score;
+    try {
+      localStorage.setItem('pumpkin_highscore', String(highscore));
+    } catch (e) {
+      // ignore
+    }
+  }
 }
 
 let timeLeft = 180; // 3 minutes in seconds
@@ -210,7 +241,7 @@ function gameLoop() {
 
   // Draw the hoop, HUD, and timer
   drawHoop();
-  drawHUD();
+  updateHUD();
   drawTimer();
 
   // Update and draw the pumpkin
@@ -242,13 +273,23 @@ function gameLoop() {
 canvasP.addEventListener('pointerdown', (e) => {
   if (!running || !currentPumpkin) return;
 
-  // Apply an upward force to the pumpkin on each tap
-  const jumpForce = -6; // Adjust this value for the desired jump height
-  currentPumpkin.vy = jumpForce;
+  if (rolling) {
+    // Stop rolling on the first click
+    rolling = false;
+    return;
+  }
 
-  // Add a slight horizontal force to simulate movement towards the hoop
-  const horizontalForce = 2; // Adjust this value for the desired horizontal speed
-  currentPumpkin.vx += horizontalForce;
+  // Apply an upward force to the pumpkin
+  const jumpForce = -8; // Strong upward force
+  currentPumpkin.vy += jumpForce; // Increment vertical velocity
+
+  // Add a horizontal force to move towards the basket
+  const dx = hoop.x - currentPumpkin.x;
+  const horizontalForce = Math.sign(dx) * 3; // Directional force towards the hoop
+  currentPumpkin.vx += horizontalForce; // Increment horizontal velocity
+
+  // Ensure the pumpkin is marked as thrown
+  currentPumpkin.thrown = true;
 });
 
 // start/reset buttons wiring
