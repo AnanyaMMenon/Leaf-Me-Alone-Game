@@ -42,6 +42,13 @@ let powerMode = false;
 let game = null; // interval handle
 let isRunning = false; // only true while the game loop is active
 
+// Highscore persistence for Pawc-Man
+let catHighscore = 0;
+try {
+  const stored = localStorage.getItem('catnap_highscore');
+  if (stored) catHighscore = parseInt(stored, 10) || 0;
+} catch (e) {}
+
 // --- Music (Web Audio API) ---
 let audioCtx = null;
 let musicTimer = null;
@@ -195,6 +202,13 @@ function moveCat() {
   }
   const scoreEl = document.getElementById("score");
   if (scoreEl) scoreEl.textContent = "Score: " + score;
+
+  // update DOM highscore if exceeded
+  if (score > catHighscore) {
+    catHighscore = score;
+    try { localStorage.setItem('catnap_highscore', String(catHighscore)); } catch (e) {}
+  }
+  try { var hh = document.getElementById('cnHighscore'); if (hh) hh.textContent = 'Highscore: ' + catHighscore; } catch (e) {}
 }
 
 function moveGhosts() {
@@ -260,6 +274,12 @@ function showGameOver() {
 
   ctx.font = '20px Helvetica';
   ctx.fillText('Final Score: ' + score, canvas.width / 2, canvas.height / 2 + 24);
+
+  // ensure highscore saved and DOM updated
+  if (score > catHighscore) {
+    catHighscore = score; try { localStorage.setItem('catnap_highscore', String(catHighscore)); } catch (e) {}
+  }
+  try { var hh = document.getElementById('cnHighscore'); if (hh) hh.textContent = 'Highscore: ' + catHighscore; } catch (e) {}
 
   // small hint to reset
   ctx.font = '14px Helvetica';

@@ -6,7 +6,12 @@
 </head>
 <body>
   <header class="site-header">
-    <h1>PawcMan </h1>
+    <div class="hud-panel">
+      <h1 style="display:inline-block; margin:0 12px 0 0; color:#fff7ec;">Pawc-Man</h1>
+      <span id="cnHighscore" style="margin-right:12px; font-weight:700;">Highscore: 0</span>
+      <span id="cnScore">Score: 0</span>
+      <button onclick="window.location.href='../index.html'" class="exit-log" style="margin-left:12px;"><span class="flame">🔥</span><small>Exit</small></button>
+    </div>
   </header>
   <style>
     body {
@@ -69,7 +74,7 @@
   <p id="score">Score: 0</p>
   <button id="startButton" onclick="startGame()">Start</button>
   <button id="resetButton" onclick="resetGame()">Reset</button>
-  <button id="backButton" onclick="window.location.href='../index.html'">Back</button>
+  <button id="backButton" onclick="window.location.href='../index.html#menu'">Back</button>
   <script src="cat-pacman.js"></script>
 </body>
 </html>

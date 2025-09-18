@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Fall Arcade 🍂</title>
+  <title>Pumpkin Raider �</title>
   <!-- Fonts for cozy theme -->
   <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Merriweather:wght@300;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
    <link rel="stylesheet" href="style.css">
  </head>
  <body>
 
-   <header class="site-header">
-    <h1 id="appTitle">🍂 Fall Arcade 🍂</h1>
-    <!-- day/night toggle removed per user request -->
-   </header>
+  <header class="site-header">
+   <h1 id="appTitle" class="no-break">🎃 Pumpkin Raider</h1>
+   <!-- day/night toggle removed per user request -->
+  </header>
 
    <main class="game-wrap">
      <canvas id="bgCanvas"></canvas>
@@ -22,7 +22,7 @@
         <div class="crawl-box">
           <div class="crawl-container">
             <div id="crawl" class="crawl">
-              <div class="crawl-content">
+              <div class="crawl-content" id="crawlContent">
                 <p data-text="Welcome to the pumpkin patch arcade 🎃."></p>
                 <p data-text="Could this BE any cozier? ☕🍂."></p>
                 <p data-text="Press Enter before the squirrel steals your turn 🐿️."></p>
@@ -30,15 +30,18 @@
             </div>
           </div>
         </div>
-  <button id="enterBtn" class="enter-btn" style="display:none" disabled>Enter the Arcade</button>
+  <div style="margin-top:8px;">
+    <button id="skipWriteupBtn" class="enter-btn" style="background:#f59e0b;">Skip Writeup</button>
+    <button id="enterBtn" class="enter-btn" style="display:none" disabled>Enter the Arcade</button>
+  </div>
         <!-- bottom squirrel chat bubble -->
         <div id="bottomSquirrel" class="bottom-squirrel" aria-hidden="true">
           <div class="squirrel-emoji">🐿️</div>
           <div class="chat-bubble" id="squirrelBubble">Hi there! Ready for cozy games?</div>
         </div>
       </section>
-      <section id="mainMenu" class="menu-panel hidden">
-        <p class="menu-sub">Choose Your Adventure</p>
+  <section id="mainMenu" class="menu-panel hidden">
+        <p class="menu-sub">Choose Your Game </p>
         <div class="game-cards" aria-hidden="true">
           <div class="game-card" data-game="leaf-catch">
             <div class="card-icon">
@@ -103,6 +106,39 @@
             if (landing) landing.classList.add('hidden');
             if (menu) menu.classList.remove('hidden');
           });
+        }
+
+        // Clicking the writeup itself should autocomplete and reveal the Enter button
+        var crawlContent = document.getElementById('crawlContent');
+        if (crawlContent) {
+          crawlContent.addEventListener('click', function () {
+            var enter = document.getElementById('enterBtn');
+            if (enter) {
+              enter.style.display = '';
+              enter.disabled = false;
+              enter.classList.add('fade-in');
+              enter.focus();
+            }
+            // hide the crawl so the Enter is visible
+            var landing = document.getElementById('landing'); if (landing) landing.classList.add('hidden');
+          });
+        }
+
+        // remove the explicit Skip button (if present) - keep for backward compat but hide
+        var skipBtn = document.getElementById('skipWriteupBtn'); if (skipBtn) skipBtn.style.display = 'none';
+
+        // Exit button: return to the pure intro (no hash)
+        var exitIntro = document.getElementById('exitIntro');
+        if (exitIntro) exitIntro.addEventListener('click', function () { window.location.href = 'index.html'; });
+
+        // If URL hash indicates we should open the menu directly, skip landing
+        if (window.location && window.location.hash === '#menu') {
+          var landing = document.getElementById('landing');
+          var menu = document.getElementById('mainMenu');
+          if (landing) landing.classList.add('hidden');
+          if (menu) menu.classList.remove('hidden');
+          // start ambient audio since user already opted into the menu
+          try { if (typeof manager !== 'undefined') manager.startAmbient(); } catch (e) {}
         }
     });
   </script>

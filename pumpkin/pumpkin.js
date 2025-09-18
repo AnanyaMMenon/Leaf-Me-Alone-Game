@@ -230,11 +230,15 @@ function checkHoopScore(p) {
 }
 
 function updateHUD() {
+  // Also update the DOM HUD if present
+  try {
+    var hh = document.getElementById('gameHighscore'); if (hh) hh.textContent = 'Highscore: ' + highscore;
+  } catch (e) {}
+
   ctxP.fillStyle = '#ffffff';
   ctxP.font = '18px sans-serif';
   ctxP.textAlign = 'left';
   ctxP.fillText('Score: ' + score, 12, 28);
-  ctxP.fillText('Highscore: ' + highscore, 12, 52);
 
   // Update highscore if the current score exceeds it
   if (score > highscore) {
@@ -337,9 +341,10 @@ document.getElementById('startBtn').addEventListener('click', () => {
 document.getElementById('resetBtn').addEventListener('click', () => {
   resetGame();
 });
-document.getElementById('backBtn').addEventListener('click', () => {
-  // Navigate back to the main menu
-  window.location.href = '../index.html';
+var backEl = document.getElementById('backBtn');
+if (backEl) backEl.addEventListener('click', () => {
+  // Navigate back to the main menu (skip landing)
+  window.location.href = '../index.html#menu';
 });
 
 function startGame() {
