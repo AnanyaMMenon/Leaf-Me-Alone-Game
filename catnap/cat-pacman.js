@@ -202,6 +202,9 @@ function moveCat() {
   }
   const scoreEl = document.getElementById("score");
   if (scoreEl) scoreEl.textContent = "Score: " + score;
+  // also update fixed top-left DOM score if present
+  const cnScoreEl = document.getElementById('cnScore');
+  if (cnScoreEl) cnScoreEl.textContent = 'Score: ' + score;
 
   // update DOM highscore if exceeded
   if (score > catHighscore) {
@@ -300,15 +303,14 @@ function resetGame() {
   powerMode = false;
   const scoreEl = document.getElementById("score");
   if (scoreEl) scoreEl.textContent = "Score: " + score;
+  const cnScoreEl = document.getElementById('cnScore');
+  if (cnScoreEl) cnScoreEl.textContent = 'Score: ' + score;
   stopGame();
   draw();
 }
 
 function drawHUD() {
-  ctx.fillStyle = "#f8fafc";
-  ctx.font = Math.floor(box * 0.7) + "px Helvetica";
-  ctx.textAlign = "center";
-  ctx.fillText("Score: " + score, canvas.width / 2, 20);
+  // Removed in-canvas HUD draw - the fixed top-left DOM element `#cnScore` is used instead
 }
 
 function draw() {

@@ -8,25 +8,30 @@
 <body>
   <header class="site-header">
   <div class="hud-panel">
-    <h1 class="no-break" style="display:inline-block; margin:0 12px 0 0; color: #fff5e6;">Pumpkin Dunkin 🎃</h1>
-  <span id="gameHighscore" style="margin-right:12px; font-weight:700;">Highscore: 0</span>
-    <button onclick="window.location.href='../index.html'" class="exit-log" style="margin-left:12px;"><span class="flame">🔥</span><small>Exit</small></button>
+    <h1 class="no-break">Pumpkin Dunkin 🎃</h1>
+    <span id="gameHighscore">Highscore: 0</span>
+    <span id="gameScore">Score: 0</span>
+    <button onclick="window.location.href='../index.html'" class="exit-log"><span class="flame">🔥</span><small>Exit</small></button>
   </div>
   </header>
 
   <main class="game-wrap">
     <div class="game-panel">
-      <canvas id="gameCanvas" width="480" height="640"></canvas>
-        <div class="controls">
-        <button id="startBtn">▸ Start</button>
-        <button id="resetBtn">↻ Reset</button>
-        <button id="backBtn">✖ Back</button>
-      </div>
       <div class="pumpkin-instructions" style="text-align:center;margin-top:8px; color:#fff;">
         <div id="instructions">
           <h2>How to Play</h2>
           <p>Tap the screen to make the pumpkin jump towards the hoop, score as many points as possible within 3 minutes</p>
         </div>
+      </div>
+    </div>
+    <div class="gameboy">
+      <div class="gb-screen">
+        <canvas id="gameCanvas" width="480" height="640"></canvas>
+      </div>
+      <div class="gb-controls">
+        <button class="start" id="startBtn">▸ Start</button>
+        <button class="reset" id="resetBtn">↻ Reset</button>
+        <button class="back" id="backBtn">✖ Back</button>
       </div>
     </div>
   </main>

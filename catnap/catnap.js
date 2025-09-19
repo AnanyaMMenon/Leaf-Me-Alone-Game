@@ -17,7 +17,8 @@ function startGame() {
   speed = 150;
   candy = randomPosition();
   obstacles = [];
-  document.getElementById("score").textContent = "Score: 0";
+  // update unified top-left HUD instead of legacy #score element
+  const cnScoreEl = document.getElementById('cnScore'); if (cnScoreEl) cnScoreEl.textContent = 'Score: 0';
   clearInterval(game);
   game = setInterval(draw, speed);
 }
@@ -72,8 +73,9 @@ function draw() {
 
   // if cat eats candy
   if (catX === candy.x && catY === candy.y) {
-    score++;
-    document.getElementById("score").textContent = "Score: " + score;
+  score++;
+  // update unified top-left HUD instead of legacy in-page score
+  const cnScoreEl2 = document.getElementById('cnScore'); if (cnScoreEl2) cnScoreEl2.textContent = 'Score: ' + score;
     candy = randomPosition();
     // occasionally spawn obstacle
     if (score % 3 === 0) {

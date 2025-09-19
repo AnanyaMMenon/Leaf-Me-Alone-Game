@@ -239,12 +239,10 @@ function updateHUD() {
   // Also update the DOM HUD if present
   try {
     var hh = document.getElementById('gameHighscore'); if (hh) hh.textContent = 'Highscore: ' + highscore;
+    var gs = document.getElementById('gameScore'); if (gs) gs.textContent = 'Score: ' + score;
   } catch (e) {}
 
-  ctxP.fillStyle = '#ffffff';
-  ctxP.font = '18px sans-serif';
-  ctxP.textAlign = 'left';
-  ctxP.fillText('Score: ' + score, 12, 28);
+  // Removed canvas text draw for 'Score' to avoid duplicate HUDs; the DOM `#gameScore` is used instead
 
   // Update highscore if the current score exceeds it
   if (score > highscore) {
@@ -340,17 +338,15 @@ canvasP.addEventListener('pointerdown', (e) => {
   currentPumpkin.thrown = true;
 });
 
-// start/reset buttons wiring
-document.getElementById('startBtn').addEventListener('click', () => {
-  startGame();
-});
-document.getElementById('resetBtn').addEventListener('click', () => {
-  resetGame();
-});
-var backEl = document.getElementById('backBtn');
-if (backEl) backEl.addEventListener('click', () => {
-  // Navigate back to the main menu (skip landing)
-  window.location.href = '../index.html#menu';
+// start/reset buttons wiring - ensure DOM is ready and elements exist
+document.addEventListener('DOMContentLoaded', () => {
+  const startEl = document.getElementById('startBtn');
+  const resetEl = document.getElementById('resetBtn');
+  const backEl = document.getElementById('backBtn');
+
+  if (startEl) startEl.addEventListener('click', () => startGame());
+  if (resetEl) resetEl.addEventListener('click', () => resetGame());
+  if (backEl) backEl.addEventListener('click', () => { window.location.href = '../index.html#menu'; });
 });
 
 function startGame() {

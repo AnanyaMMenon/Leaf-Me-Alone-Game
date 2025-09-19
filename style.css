@@ -31,17 +31,17 @@ h1 {
 
 /* Make game page headings (inside HUD) look like the main Pumpkin Raider header */
 .hud-panel h1, .game-panel header h1 {
-  font-size: 40px; /* slightly smaller than main title */
+  font-size: 44px; /* slightly larger so game names pop */
   font-weight: 900;
-  color: #fff7ec;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  text-shadow: 0 4px 14px rgba(30,10,0,0.45);
+  color: #0b0b0b; /* near-black for maximum contrast */
+  letter-spacing: 0.6px;
+  text-transform: none; /* keep natural casing for readability */
+  text-shadow: 0 3px 8px rgba(0,0,0,0.35);
   display: inline-block;
-  padding: 4px 10px;
-  background: transparent; /* removed translucent rounded box */
-  border-radius: 0;
-  border: none;
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.85); /* subtle light backdrop to separate from busy backgrounds */
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 .site-header {
@@ -91,10 +91,12 @@ h1 {
 }
 
 .game-panel {
-  background: rgba(15,23,42,0.5);
-  padding: 12px;
+  /* make panel minimal so the GameBoy frame remains the visual focus */
+  background: transparent; /* allow the GameBoy frame to be fully visible */
+  padding: 8px 0 0 0;
   border-radius: 6px;
   display: inline-block;
+  z-index: 10002; /* sit above page background but below fixed HUD */
 }
 canvas {
   /* keep a dark canvas background so UI text is readable */
@@ -403,3 +405,140 @@ button {
   font-size: 14px;
   color: #6a3b1e;
 }
+
+/* Fixed top-left highscore display - unified style for all games */
+#highscore, #gameHighscore, #cnHighscore {
+  position: fixed;
+  top: 16px; /* slightly lower for better spacing with header */
+  left: 18px;
+  z-index: 10001;
+  background: linear-gradient(180deg, rgba(8,40,8,0.72), rgba(6,30,6,0.56));
+  color: #a8ff7a; /* pleasant pale green */
+  padding: 10px 14px; /* more breathing room */
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+}
+
+/* Current score shown under the highscore - visually subordinate */
+#score, #cnScore, #gameScore {
+  position: fixed;
+  top: 64px; /* below the highscore box */
+  left: 18px;
+  z-index: 10001;
+  background: linear-gradient(180deg, rgba(10,50,10,0.34), rgba(6,30,6,0.24));
+  color: #eaffd6; /* softer off-white-green for readability */
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.34);
+}
+
+/* GameBoy frame wrapper - put the canvas inside the visible screen area of the frame */
+.gameboy {
+  /* Pure-CSS GameBoy frame: outer bezel */
+  position: relative;
+  width: 520px;
+  max-width: 90vw;
+  aspect-ratio: 13 / 18; /* maintain a tall phone-like shape */
+  margin: 0 auto;
+  display: block;
+  background: linear-gradient(180deg, #e6d5b8 0%, #d6b88a 100%);
+  border-radius: 20px;
+  padding: 22px; /* space for bezel elements */
+  box-shadow: 0 18px 48px rgba(0,0,0,0.45), inset 0 6px 14px rgba(255,255,255,0.25);
+  border: 6px solid rgba(40,28,18,0.12);
+  z-index: 10003; /* ensure GameBoy sits above translucent panels so buttons are clickable */
+}
+.gameboy::before {
+  /* little speaker grille at top */
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 12px;
+  width: 120px;
+  height: 10px;
+  border-radius: 6px;
+  background: repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0 4px, rgba(0,0,0,0.02) 4px 8px);
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.25);
+}
+.gameboy::after {
+  /* brand badge */
+  content: 'PUMPKIN';
+  position: absolute;
+  right: 18px;
+  top: 14px;
+  font-size: 12px;
+  color: rgba(20,12,6,0.8);
+  font-weight: 800;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+.gameboy .gb-screen {
+  /* the visible glass area where the canvas sits */
+  position: relative;
+  width: calc(100% - 60px);
+  height: calc(100% - 140px);
+  margin: 28px auto 10px auto;
+  background: linear-gradient(180deg, rgba(10,12,14,0.9), rgba(20,24,30,0.85));
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 8px 18px rgba(255,255,255,0.02), 0 6px 18px rgba(0,0,0,0.35);
+}
+.gameboy .gb-screen::after {
+  /* subtle glass glare */
+  content: '';
+  position: absolute;
+  left: -20%;
+  top: -10%;
+  width: 60%;
+  height: 60%;
+  transform: rotate(-18deg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02));
+  filter: blur(10px);
+  opacity: 0.9;
+  pointer-events: none;
+}
+.gameboy .gb-screen canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  background: transparent !important; /* let the game's canvas draw its own background if desired */
+}
+
+/* decorative buttons / directional pad area */
+.gameboy .gb-controls {
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  align-items:center;
+  margin-top: 10px;
+}
+.gb-dpad {
+  width: 74px;
+  height: 74px;
+  background: linear-gradient(180deg,#2b2b2b,#111);
+  border-radius: 12px;
+  box-shadow: inset 0 6px 10px rgba(255,255,255,0.04), 0 6px 18px rgba(0,0,0,0.4);
+}
+.gb-button {
+  width: 36px;
+  height: 36px;
+  background: radial-gradient(circle at 30% 30%, #ffd07a, #ff8a33);
+  border-radius: 50%;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.45), inset 0 -3px 6px rgba(0,0,0,0.12);
+}
+
+/* responsive tweaks */
+@media (max-width: 720px) {
+  .gameboy { width: 420px; }
+}
+

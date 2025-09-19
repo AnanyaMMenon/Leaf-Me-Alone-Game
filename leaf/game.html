@@ -8,22 +8,28 @@
 <body>
   <header class="site-header">
     <div class="hud-panel">
-      <h1 style="display:inline-block; margin:0 12px 0 0; color:#fff7ec;">Leaf Me Alone 🍂</h1>
-      <span id="highscore" style="margin-right:12px; font-weight:700;">Highscore: 0</span>
+      <h1>Leaf Me Alone 🍂</h1>
+      <span id="highscore">Highscore: 0</span>
       <span id="hud"><span id="score">Score: 0 | Lives: ❤️❤️❤️</span></span>
-      <button id="soundToggle" aria-pressed="true" title="Toggle sound" style="margin-left:12px;">🔊</button>
-      <button onclick="window.location.href='../index.html'" class="exit-log" style="margin-left:12px;"><span class="flame">🔥</span><small>Exit</small></button>
+      <button id="soundToggle" aria-pressed="true" title="Toggle sound">🔊</button>
+      <button onclick="window.location.href='../index.html'" class="exit-log"><span class="flame">🔥</span><small>Exit</small></button>
     </div>
   </header>
 
   <main class="game-wrap">
-    <div class="game-panel">
-      <canvas id="gameCanvas" width="480" height="640"></canvas>
-      <div class="controls">
-  <button onclick="startGame()">▶ Start</button>
-  <button onclick="resetGame()">↻ Reset</button>
-  <button onclick="window.location.href='../index.html#menu'">✖ Back</button>
+    <!-- put the GameBoy frame outside the dark game-panel so the frame is visible -->
+    <div class="gameboy">
+      <div class="gb-screen">
+        <canvas id="gameCanvas" width="480" height="640"></canvas>
       </div>
+      <div class="gb-controls">
+        <button class="start" onclick="startGame()">▶ Start</button>
+        <button class="reset" onclick="resetGame()">↻ Reset</button>
+        <button class="back" onclick="window.location.href='../index.html#menu'">✖ Back</button>
+      </div>
+    </div>
+    <div class="game-panel">
+      <!-- controls moved into gameboy to match Catnap layout -->
     </div>
   </main>
 

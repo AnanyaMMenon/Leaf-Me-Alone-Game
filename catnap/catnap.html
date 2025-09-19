@@ -3,78 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="../style.css">
+  <title>Pawc-Man</title>
 </head>
 <body>
   <header class="site-header">
     <div class="hud-panel">
-      <h1 style="display:inline-block; margin:0 12px 0 0; color:#fff7ec;">Pawc-Man</h1>
-      <span id="cnHighscore" style="margin-right:12px; font-weight:700;">Highscore: 0</span>
+      <h1>Pawc-Man</h1>
+      <span id="cnHighscore">Highscore: 0</span>
       <span id="cnScore">Score: 0</span>
-      <button onclick="window.location.href='../index.html'" class="exit-log" style="margin-left:12px;"><span class="flame">🔥</span><small>Exit</small></button>
+      <button onclick="window.location.href='../index.html'" class="exit-log"><span class="flame">🔥</span><small>Exit</small></button>
     </div>
   </header>
-  <style>
-    body {
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url('../Assets/bg.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #01080f;
-      font-family: Helvetica, Arial, sans-serif;
-      text-align: center;
-    }
 
-    canvas {
-      background: rgba(0, 0, 0, 0.8);
-      border: 3px solid #f59e0b;
-      display: block;
-      margin: 20px auto;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    }
-
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    button#startButton {
-      background-color: #22c55e;
-      color: #fff;
-    }
-
-    button#resetButton {
-      background-color: #f59e0b;
-      color: #fff;
-    }
-
-    button#backButton {
-      background-color: #ef4444;
-      color: #fff;
-    }
-
-    .gradient-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.5));
-      pointer-events: none;
-      z-index: 1;
-    }
-  </style>
-</head>
-<body>
   <div class="gradient-overlay"></div>
-  <canvas id="gameCanvas" width="440" height="440"></canvas>
-  <p id="score">Score: 0</p>
-  <button id="startButton" onclick="startGame()">Start</button>
-  <button id="resetButton" onclick="resetGame()">Reset</button>
-  <button id="backButton" onclick="window.location.href='../index.html#menu'">Back</button>
+  <main class="game-wrap">
+    <div class="game-panel">
+      <div class="gameboy catnap">
+        <div class="gb-screen">
+          <canvas id="gameCanvas" width="440" height="440"></canvas>
+        </div>
+        <div class="gb-controls">
+          <button class="start" id="startButton" onclick="startGame()">Start</button>
+          <button class="reset" id="resetButton" onclick="resetGame()">Reset</button>
+          <button class="back" id="backButton" onclick="window.location.href='../index.html#menu'">Back</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
   <script src="cat-pacman.js"></script>
 </body>
 </html>
