@@ -15,18 +15,33 @@ body.game-active {
 
 /* make title more visible */
 h1 {
-  font-size: 56px; /* larger title */
+  font-size: 68px; /* larger title */
   font-weight: 900;
-  color: #fff7ec; /* light text to contrast */
+  color: #fff9e6; /* brighter text to contrast */
   margin-top: 6px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  text-shadow: 0 6px 18px rgba(30,10,0,0.45);
+  text-shadow: 0 8px 26px rgba(25,10,0,0.55);
   display: inline-block;
-  padding: 6px 14px;
-  background: linear-gradient(180deg, rgba(120,50,10,0.12), rgba(80,30,6,0.08));
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.06);
+  padding: 8px 18px;
+  background: linear-gradient(180deg, rgba(40,24,8,0.22), rgba(80,40,12,0.06)); /* subtle stronger backdrop just for title */
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Make game page headings (inside HUD) look like the main Pumpkin Raider header */
+.hud-panel h1, .game-panel header h1 {
+  font-size: 40px; /* slightly smaller than main title */
+  font-weight: 900;
+  color: #fff7ec;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-shadow: 0 4px 14px rgba(30,10,0,0.45);
+  display: inline-block;
+  padding: 4px 10px;
+  background: transparent; /* removed translucent rounded box */
+  border-radius: 0;
+  border: none;
 }
 
 .site-header {
@@ -194,28 +209,29 @@ canvas {
 /* Translucent HUD for in-game title, highscore, lives etc. */
 .hud-panel {
   display: inline-block;
-  background: rgba(255, 250, 240, 0.18);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent; /* remove translucent background */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
   padding: 8px 12px;
-  border-radius: 10px;
+  border-radius: 0;
   color: #fff7ec;
-  box-shadow: 0 8px 18px rgba(40, 16, 6, 0.12);
+  box-shadow: none;
 }
 
 /* Exit log button - a small 'log' with a flame icon */
 .exit-log {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: linear-gradient(180deg,#3a1f08,#502912);
-  color: #fff7ec;
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,200,120,0.08);
-  box-shadow: 0 6px 18px rgba(40,12,6,0.35);
+  gap: 10px;
+  background: linear-gradient(180deg,#5a2810,#703216);
+  color: #fffaf0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,220,140,0.12);
+  box-shadow: 0 10px 28px rgba(30,12,6,0.45);
   cursor: pointer;
+  font-weight: 800;
 }
 .exit-log .flame { font-size: 18px; transform: translateY(-1px); }
 .exit-log small { font-size: 12px; opacity: 0.95; }

@@ -118,6 +118,12 @@ function Pumpkin(x, y, vx, vy) {
         this.vy *= -0.6; // Reverse velocity and reduce it to simulate energy loss
       }
 
+      // Bounce off the top (ceiling) so the pumpkin stays in play
+      if (this.y - this.r < 0) {
+        this.y = this.r;
+        this.vy *= -0.6; // reverse vertical velocity with damping
+      }
+
       // Bounce off the walls
       if (this.x < this.r || this.x > canvasP.width - this.r) {
         this.vx *= -0.6; // Reverse horizontal velocity and reduce it
@@ -251,7 +257,7 @@ function updateHUD() {
   }
 }
 
-let timeLeft = 180; // 3 minutes in seconds
+let timeLeft = 60; // 1 minute in seconds
 function drawTimer() {
   ctxP.fillStyle = '#ffffff';
   ctxP.font = '18px sans-serif';
@@ -292,8 +298,8 @@ function gameLoop() {
     if (checkHoopScore(p)) {
       score += 2; // Increment score for a successful shot
       spawnConfettiLocal(p.x, p.y, 18);
-      timeLeft = 10; // Reset the timer on a successful shot
-        pumpkins.splice(i, 1); // Remove the scored pumpkin
+      // Do not alter the remaining time when a basket is scored.
+      pumpkins.splice(i, 1); // Remove the scored pumpkin
         try { playSwish(); } catch (e) {}
       const x = canvasP.width / 2;
       const y = canvasP.height - 48;
@@ -351,7 +357,7 @@ function startGame() {
   running = true;
   pumpkins = [];
   score = 0;
-  timeLeft = 180; // Reset timer to 3 minutes
+  timeLeft = 60; // Reset timer to 1 minute
   initHoop();
   confettiLocal = [];
 
@@ -367,7 +373,7 @@ function resetGame() {
   running = false;
   pumpkins = [];
   score = 0;
-  timeLeft = 180; // Reset timer to 3 minutes
+  timeLeft = 60; // Reset timer to 1 minute
   ctxP.clearRect(0, 0, canvasP.width, canvasP.height);
 }
 
