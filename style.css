@@ -68,27 +68,7 @@ h1 {
 
 /* Game-like display font for Pumpkin page title */
 /* Chunky display font for Pumpkin title - use Luckiest Guy for a playful arcade look */
-@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
-
-.pumpkin-page .hud-panel h1 {
-  font-family: 'Luckiest Guy', 'Arial Black', Georgia, serif;
-  font-weight: 700;
-  font-size: 64px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #fff7e6;
-  text-shadow: 0 6px 26px rgba(40,20,10,0.6);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.pumpkin-badge svg { display:block; }
-.pumpkin-badge { display:inline-flex; align-items:center; justify-content:center; padding-right:6px; }
-
-@media (max-width: 720px) {
-  .pumpkin-page .hud-panel h1 { font-size: 28px; letter-spacing: 1px; }
-}
+/* Pumpkin uses the same game-page header styling as the Leaf page; no special badge/font */
 
 .site-header {
   /* banner removed - keep header minimal */
@@ -144,9 +124,9 @@ h1 {
   flex-direction: column;
   justify-content: center; /* center children vertically in viewport */
   align-items: center; /* center children horizontally */
-  min-height: calc(100vh - 120px); /* leave room for header/footer */
-  padding: 18px 0;
-  gap: 18px; /* space between instructions and GameBoy */
+  min-height: calc(100vh - 200px); /* reduce total vertical space so game sits higher */
+  padding: 8px 0 12px 0;
+  gap: 8px; /* reduce space between header/instructions and GameBoy */
 }
 .game-page .gameboy,
 .pumpkin-page .gameboy {
@@ -157,6 +137,7 @@ h1 {
 .pumpkin-page .game-panel {
   width: 100%;
   max-width: 980px; /* keep instructions readable */
+  margin-top: 0;
 }
 
 /* Pumpkin help toggle (floating) */
@@ -590,16 +571,16 @@ button {
 .gameboy {
   /* Pure-CSS GameBoy frame: outer bezel */
   position: relative;
-  width: 520px;
-  max-width: 90vw;
-  aspect-ratio: 13 / 18; /* maintain a tall phone-like shape */
+  width: 420px; /* slightly smaller so surrounding controls are visible */
+  max-width: 86vw;
+  aspect-ratio: 12 / 17; /* slightly squatter to fit better */
   margin: 0 auto;
   display: block;
   background: linear-gradient(180deg, #e6d5b8 0%, #d6b88a 100%);
-  border-radius: 20px;
-  padding: 22px; /* space for bezel elements */
-  box-shadow: 0 18px 48px rgba(0,0,0,0.45), inset 0 6px 14px rgba(255,255,255,0.25);
-  border: 6px solid rgba(40,28,18,0.12);
+  border-radius: 16px;
+  padding: 14px; /* tighter bezel to reduce footprint */
+  box-shadow: 0 14px 36px rgba(0,0,0,0.42), inset 0 6px 10px rgba(255,255,255,0.2);
+  border: 5px solid rgba(40,28,18,0.10);
   z-index: 10003; /* ensure GameBoy sits above translucent panels so buttons are clickable */
 }
 .gameboy::before {
@@ -687,6 +668,6 @@ button {
 
 /* responsive tweaks */
 @media (max-width: 720px) {
-  .gameboy { width: 420px; }
+  .gameboy { width: 320px; }
 }
 

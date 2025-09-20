@@ -108,7 +108,7 @@
           });
         }
 
-        // Clicking the writeup itself should autocomplete and reveal the Enter button
+        // Clicking the writeup itself should reveal the Enter button but NOT hide the crawl
         var crawlContent = document.getElementById('crawlContent');
         if (crawlContent) {
           crawlContent.addEventListener('click', function () {
@@ -119,8 +119,8 @@
               enter.classList.add('fade-in');
               enter.focus();
             }
-            // hide the crawl so the Enter is visible
-            var landing = document.getElementById('landing'); if (landing) landing.classList.add('hidden');
+            // Do NOT hide the crawl here. The landing stays visible until the user presses Enter
+            // or explicitly fast-forwards with Escape (handled below).
           });
         }
 
@@ -251,13 +251,19 @@
           setTimeout(function () { cspan.classList.add('visible'); if (idx % 6 === 0) blip(); }, interval * idx + 120);
         });
 
-        // allow Escape to reveal everything immediately
+        // allow Escape to reveal everything immediately, but do NOT open the menu or hide the landing
         document.addEventListener('keydown', function escFastForward(e) {
           if (e.key === 'Escape' || e.key === 'Esc') {
             charList.forEach(function (cspan) { cspan.classList.add('visible'); });
             var enter = document.getElementById('enterBtn');
-            if (enter) { enter.style.display = ''; enter.disabled = false; enter.classList.add('fade-in'); enter.focus(); }
-            // stop listening after used
+            if (enter) {
+              enter.style.display = '';
+              enter.disabled = false;
+              enter.classList.add('fade-in');
+              enter.focus();
+            }
+            // Do NOT hide the landing or open the main menu here - keep landing visible
+            // stop listening after used so repeated Escape doesn't re-trigger
             document.removeEventListener('keydown', escFastForward);
           }
         });
