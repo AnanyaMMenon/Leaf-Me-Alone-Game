@@ -1,35 +1,87 @@
 # 🍂 Leaf Me Alone
+# Pumpkin Raider — Cozy Retro Arcade 🎃
 
-**Leaf Me Alone** is a cozy, funny little desktop game built for the **Codedex x GitHub Edu September Challenge**.  
-Catch falling autumn leaves with your basket and rack up points — but don’t miss too many or it’s game over!  
+Welcome to Pumpkin Raider — a tiny cozy arcade packed with three retro mini-games. It's all about comfy vibes, crunchy leaves, and silly high scores. Perfect for late-night snack breaks and aesthetic pumpkins.
+
+## The Games
+
+1. Leaf Me Alone (🍂) — Catch falling leaves before they hit the ground.
+2. Pumpkin Dunkin (🎃) — Toss pumpkins into a hoop for sweet points.
+3. Pawc-Man (🐈) — A cat-themed, cozy take on classic maze munching Pacman.
+
+Each game lives in its own folder (`leaf/`, `pumpkin/`, `catnap/`) and uses an inside-the-GameBoy canvas area for gameplay.
+
+## Project Files
+
+- `index.html` — Intro landing with typewriter crawl and game selector.
+- `style.css` — Global styles and GameBoy UI framing.
+- `pumpkin/` — Pumpkin Dunkin game (HTML + JS).
+- `leaf/` — Leaf Me Alone game (HTML + JS).
+- `catnap/` — Pawc-Man / Cozy Cat game (HTML + JS).
+- `Assets/` — Images and gifs used across the games.
+
+## Cute features
+
+- Cozy typewriter intro with tiny blips.
+- GameBoy-styled canvas for in-game rendering and green digital score display (Pumpkin implemented).
+- Floating help button (?) on game pages.
+- Animated heading emojis and fall-themed styling.
+
+## Run locally (Windows PowerShell)
+
+Open PowerShell, cd into the project folder and run:
+
+```powershell
+npm install; npm start
+```
+
+This will start the Electron app. You can also open `index.html` in a browser for a quick preview (audio and Electron-specific features may be limited).
+
+## Quick test checklist
+
+- Intro behavior:
+  - Click inside the crawl: the Enter button appears but the crawl stays visible.
+  - Press `Escape`: all intro text is revealed and the Enter button enables (landing remains visible).
+  - Click Enter: the main menu appears.
+
+- Game pages:
+  - GameBoy is centered and sized so control buttons are visible.
+  - Pumpkin Dunkin displays the green digital score on the GameBoy canvas.
+  - Leaf Me Alone: the canvas score is pending (todo — copy the Pumpkin score rendering to `leaf/game.js`).
+  - Click the floating `?` for help overlays.
+  - Exit button is pinned to the top-right.
+
+## Development notes
+
+- To add the same canvas score behavior to Leaf: copy `drawCanvasScore()` from `pumpkin/pumpkin.js` into `leaf/game.js` and call it from the Leaf game loop.
+- Most styling lives in `style.css`.
+
+
+## 🧸 A friendly note
+
+This repo is meant to be cozy and approachable — feel free to tweak the fonts, swap sprites in `Assets/`, or add your own microgames. If you make improvements, I’d love to see a screenshot or a PR!
+
+### Windows (PowerShell) quick run
+
+Open PowerShell, cd to the project folder and run:
+
+```powershell
+npm install; npm start
+```
+
+### Quick test checklist
+
+- Intro behavior:
+  - Click the crawl: the Enter button appears but the crawl stays visible.
+  - Press `Escape`: all intro text is revealed and the Enter button enables (landing remains visible).
+  - Click Enter: the menu opens.
+
+- Game pages:
+  - GameBoy is centered and sized so control buttons are visible.
+  - The green digital score appears on the GameBoy canvas during play (Pumpkin implemented; Leaf pending).
+  - Click the floating `?` to open the help overlay.
+  - Exit button sits in the top-right corner.
 
 ---
 
-## 🎮 Demo
-
-![Gameplay Demo](https://github.com/AnanyaMMenon/Leaf-Me-Alone-Game/raw/main/Assets/Screenshot.gif)
-
-
-
-Live version: *(if hosted on GitHub Pages, add link here)*  
-
----
-
-## ✨ Features
-
-- 🍁 Falling leaves with gentle autumn sway  
-- 🧺 Move your basket with arrow keys **or** your mouse  
-- ❤️ Lives system (3 misses and you’re done)  
-- 📈 Score counter with increasing difficulty  
-- 🎛️ GUI buttons (Start / Quit) + wrapped in **Electron** for desktop feel  
-
----
-
-## 🚀 Getting Started
-
-### Run Locally
-```bash
-git clone https://github.com/AnanyaMMenon/Leaf-Me-Alone-Game.git
-cd Leaf-Me-Alone-Game
-npm install
-npm start
+If you'd like, I can add a short `CONTRIBUTING.md`, wire Leaf's canvas score, or create a short packaged build script for Windows.
