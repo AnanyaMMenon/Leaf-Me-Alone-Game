@@ -1,4 +1,3 @@
-# 🍂 Leaf Me Alone
 # Pumpkin Raider — Cozy Retro Arcade 🎃
 
 Welcome to Pumpkin Raider — a tiny cozy arcade packed with three retro mini-games. It's all about comfy vibes, crunchy leaves, and silly high scores. Perfect for late-night snack breaks and aesthetic pumpkins.
@@ -19,6 +18,8 @@ Each game lives in its own folder (`leaf/`, `pumpkin/`, `catnap/`) and uses an i
 - `leaf/` — Leaf Me Alone game (HTML + JS).
 - `catnap/` — Pawc-Man / Cozy Cat game (HTML + JS).
 - `Assets/` — Images and gifs used across the games.
+
+> Note: this project is wrapped with Electron for a desktop app experience. Use `npm start` to launch the Electron shell locally.
 
 ## Cute features
 
@@ -60,28 +61,5 @@ This will start the Electron app. You can also open `index.html` in a browser fo
 ## 🧸 A friendly note
 
 This repo is meant to be cozy and approachable — feel free to tweak the fonts, swap sprites in `Assets/`, or add your own microgames. If you make improvements, I’d love to see a screenshot or a PR!
-
-### Windows (PowerShell) quick run
-
-Open PowerShell, cd to the project folder and run:
-
-```powershell
-npm install; npm start
-```
-
-### Quick test checklist
-
-- Intro behavior:
-  - Click the crawl: the Enter button appears but the crawl stays visible.
-  - Press `Escape`: all intro text is revealed and the Enter button enables (landing remains visible).
-  - Click Enter: the menu opens.
-
-- Game pages:
-  - GameBoy is centered and sized so control buttons are visible.
-  - The green digital score appears on the GameBoy canvas during play (Pumpkin implemented; Leaf pending).
-  - Click the floating `?` to open the help overlay.
-  - Exit button sits in the top-right corner.
-
----
 
 If you'd like, I can add a short `CONTRIBUTING.md`, wire Leaf's canvas score, or create a short packaged build script for Windows.
