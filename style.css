@@ -8,6 +8,7 @@ body {
   cursor: url('Assets/acorn.cur'), auto; /* fallback - if acorn.cur exists */
 }
 
+
 /* App-wide: force non-scrollable layout (hide scrollbars) */
 html, body { overflow: hidden; height: 100%; }
 
@@ -60,6 +61,33 @@ h1 {
   letter-spacing: 0.4px;
   font-style: normal;
   text-shadow: 0 2px 6px rgba(160,80,20,0.08); /* subtle warm shadow for depth */
+}
+
+/* Pumpkin-specific title styling */
+/* Pumpkin title customizations removed (undo). */
+
+/* Game-like display font for Pumpkin page title */
+/* Chunky display font for Pumpkin title - use Luckiest Guy for a playful arcade look */
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
+.pumpkin-page .hud-panel h1 {
+  font-family: 'Luckiest Guy', 'Arial Black', Georgia, serif;
+  font-weight: 700;
+  font-size: 64px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #fff7e6;
+  text-shadow: 0 6px 26px rgba(40,20,10,0.6);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pumpkin-badge svg { display:block; }
+.pumpkin-badge { display:inline-flex; align-items:center; justify-content:center; padding-right:6px; }
+
+@media (max-width: 720px) {
+  .pumpkin-page .hud-panel h1 { font-size: 28px; letter-spacing: 1px; }
 }
 
 .site-header {
@@ -259,6 +287,27 @@ canvas {
 
 /* when a paragraph has been typed, make it visible */
 .crawl p.visible { visibility: visible; }
+
+/* Heading emoji animation: gentle bob + rotate for a playful effect */
+.heading-emoji {
+  display: inline-block;
+  margin-left: 8px;
+  transform-origin: 50% 50%;
+  animation: emoji-bob 2200ms ease-in-out infinite;
+}
+
+@keyframes emoji-bob {
+  0% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(-6deg); }
+  50% { transform: translateY(0px) rotate(0deg); }
+  75% { transform: translateY(-3px) rotate(6deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .heading-emoji { animation: none !important; }
+}
 .menu-title {
   font-size: 34px;
   margin: 6px 0 4px 0;
@@ -328,21 +377,21 @@ canvas {
 /* position exit-log at bottom center on game pages */
 .game-wrap .exit-log {
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 14px;
+  right: 18px;
+  top: 18px;
   z-index: 9999;
 }
 
-/* On wider viewports, place the exit button at the top-right corner for easier access */
-@media (min-width: 900px) {
-  .game-wrap .exit-log {
-    left: auto;
-    right: 18px;
-    top: 18px;
-    bottom: auto;
-    transform: none;
-  }
+/* Global override: if `.exit-log` is placed inside the header (or elsewhere),
+   pin it to top-right so it appears in the corner consistently. */
+.exit-log {
+  position: fixed !important;
+  right: 18px !important;
+  top: 18px !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  z-index: 10010 !important;
 }
 
 /* utility to keep words from breaking across lines */
