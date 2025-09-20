@@ -389,6 +389,8 @@ function update() {
   }
 
   drawBasket();
+  // draw the score onto the game canvas (green digital/GameBoy-style)
+  drawCanvasScore();
   // update and draw confetti at the end so it appears above most elements
   updateConfetti();
   drawConfetti();
@@ -416,6 +418,46 @@ function updateHUD() {
     }
   } else {
     if (hsEl) hsEl.textContent = `Highscore: ${highscore}`;
+  }
+}
+
+// Draw the score onto the canvas in a green digital font
+function drawCanvasScore() {
+  try {
+    const text = String(score);
+    ctx.save();
+    // draw a subtle dark panel behind the score
+    const fontSize = Math.floor(WIDTH * 0.06);
+    ctx.font = `700 ${fontSize}px 'Courier New', monospace`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+
+    const padding = 8;
+    const metrics = ctx.measureText(text);
+    const boxW = Math.max(metrics.width + padding * 2, fontSize * 2);
+    const boxH = fontSize + padding * 2;
+    const boxX = 12;
+    const boxY = 12;
+
+    ctx.fillStyle = 'rgba(0,0,0,0.34)';
+    ctx.fillRect(boxX, boxY, boxW, boxH);
+
+    // glowing green digits
+    ctx.shadowColor = 'rgba(40,255,100,0.9)';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = '#9eff7f';
+    ctx.fillText(text, boxX + padding, boxY + padding);
+
+    // small label
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#cfefd2';
+    ctx.font = `600 ${Math.floor(fontSize * 0.36)}px 'Courier New', monospace`;
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('SCORE', boxX + padding, boxY - 4 + padding);
+
+    ctx.restore();
+  } catch (e) {
+    console.warn('drawCanvasScore error', e);
   }
 }
 
@@ -495,4 +537,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = soundEnabled ? '🔊' : '🔈';
     btn.setAttribute('aria-pressed', soundEnabled ? 'true' : 'false');
   });
+  // leaf help overlay wiring
+  const helpBtn = document.getElementById('leafHelpBtn');
+  const overlay = document.getElementById('leafHelpOverlay');
+  const closeBtn = document.getElementById('leafHelpClose');
+  if (helpBtn && overlay) {
+    helpBtn.addEventListener('click', () => { overlay.classList.remove('hidden'); overlay.setAttribute('aria-hidden','false'); helpBtn.setAttribute('aria-expanded','true'); });
+    if (closeBtn) closeBtn.addEventListener('click', () => { overlay.classList.add('hidden'); overlay.setAttribute('aria-hidden','true'); helpBtn.setAttribute('aria-expanded','false'); });
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.classList.add('hidden'); overlay.setAttribute('aria-hidden','true'); helpBtn.setAttribute('aria-expanded','false'); } });
+  }
 });

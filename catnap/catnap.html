@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="../style.css">
   <title>Pawc-Man</title>
 </head>
-<body>
+<body class="game-page catnap-page">
   <header class="site-header">
     <div class="hud-panel">
       <h1>Pawc-Man</h1>
@@ -32,5 +32,13 @@
   </main>
 
   <script src="cat-pacman.js"></script>
+  <button id="catnapHelpBtn" class="pumpkin-help" aria-expanded="false">?</button>
+  <div id="catnapHelpOverlay" class="pumpkin-help-overlay hidden" role="dialog" aria-hidden="true">
+    <div class="pumpkin-help-card">
+      <button id="catnapHelpClose" class="help-close">✖</button>
+      <h2>How to Play</h2>
+      <p>Use the arrows to guide the cat and collect points.</p>
+    </div>
+  </div>
 </body>
 </html>

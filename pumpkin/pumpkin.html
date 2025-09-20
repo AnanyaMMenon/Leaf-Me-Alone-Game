@@ -5,7 +5,7 @@
   <title>Pumpkin Dunkin 🎃</title>
   <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body class="pumpkin-page">
   <header class="site-header">
   <div class="hud-panel">
     <h1 class="no-break">Pumpkin Dunkin 🎃</h1>
@@ -17,12 +17,7 @@
 
   <main class="game-wrap">
     <div class="game-panel">
-      <div class="pumpkin-instructions" style="text-align:center;margin-top:8px; color:#fff;">
-        <div id="instructions">
-          <h2>How to Play</h2>
-          <p>Tap the screen to make the pumpkin jump towards the hoop, score as many points as possible within 3 minutes</p>
-        </div>
-      </div>
+      <!-- instructions intentionally removed to keep GameBoy area clean -->
     </div>
     <div class="gameboy">
       <div class="gb-screen">
@@ -35,6 +30,20 @@
       </div>
     </div>
   </main>
+
+  <!-- Floating help toggle (Pumpkin only) -->
+  <button id="pumpkinHelpBtn" class="pumpkin-help" aria-expanded="false">?</button>
+  <div id="pumpkinHelpOverlay" class="pumpkin-help-overlay hidden" role="dialog" aria-hidden="true">
+    <div class="pumpkin-help-card">
+      <button id="pumpkinHelpClose" class="help-close">✖</button>
+      <h2>How to Play</h2>
+      <p>Tap the screen (or click) to make the pumpkin jump toward the hoop. Score baskets to earn points within the time limit.</p>
+      <ul>
+        <li>Each basket: +2 points</li>
+        <li>Try to score as many as possible before time runs out</li>
+      </ul>
+    </div>
+  </div>
 
   <script src="pumpkin.js"></script>
   <script>

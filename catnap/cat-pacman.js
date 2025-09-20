@@ -350,3 +350,14 @@ if (resetBtn) resetBtn.addEventListener('click', resetGame);
 // ensure start button wiring if needed
 const startBtn = document.getElementById("startButton");
 if (startBtn) startBtn.addEventListener('click', startGame);
+
+// catnap help overlay wiring
+document.addEventListener('DOMContentLoaded', () => {
+  const helpBtn = document.getElementById('catnapHelpBtn');
+  const overlay = document.getElementById('catnapHelpOverlay');
+  const closeBtn = document.getElementById('catnapHelpClose');
+  if (!helpBtn || !overlay) return;
+  helpBtn.addEventListener('click', () => { overlay.classList.remove('hidden'); overlay.setAttribute('aria-hidden','false'); helpBtn.setAttribute('aria-expanded','true'); });
+  if (closeBtn) closeBtn.addEventListener('click', () => { overlay.classList.add('hidden'); overlay.setAttribute('aria-hidden','true'); helpBtn.setAttribute('aria-expanded','false'); });
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.classList.add('hidden'); overlay.setAttribute('aria-hidden','true'); helpBtn.setAttribute('aria-expanded','false'); } });
+});

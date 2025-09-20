@@ -255,6 +255,55 @@ function updateHUD() {
   }
 }
 
+// Draw the score onto the game canvas in a green digital font (GameBoy-style)
+function drawCanvasScore() {
+  try {
+    const text = String(score);
+    // digital/monospace look
+    ctxP.save();
+    // shadow/glow for 'screen' effect
+    ctxP.shadowColor = 'rgba(50,255,120,0.9)';
+    ctxP.shadowBlur = 10;
+    ctxP.fillStyle = '#9eff7f';
+    // Use a bold monospace font; fallback to system monospace
+    // Scale font relative to canvas width so it looks right on different sizes
+    const fontSize = Math.floor(canvasP.width * 0.06); // ~6% of width
+    ctxP.font = `bold ${fontSize}px 'Courier New', monospace`;
+    ctxP.textAlign = 'left';
+    ctxP.textBaseline = 'top';
+
+    // Draw a subtle darker 'panel' behind the score for contrast
+    const padding = 8;
+    const metrics = ctxP.measureText(text);
+    const boxW = Math.max(metrics.width + padding * 2, fontSize * 2.5);
+    const boxH = fontSize + padding * 2;
+    const boxX = 12;
+    const boxY = 12;
+    // dark translucent panel
+    ctxP.shadowBlur = 0;
+    ctxP.fillStyle = 'rgba(0,0,0,0.35)';
+    ctxP.fillRect(boxX, boxY, boxW, boxH);
+
+    // draw the glowing digits
+    ctxP.fillStyle = '#8fff66';
+    ctxP.shadowColor = 'rgba(80,255,120,0.9)';
+    ctxP.shadowBlur = 12;
+    ctxP.fillText(text, boxX + padding, boxY + padding);
+
+    // small label 'SCORE' above the number
+    ctxP.shadowBlur = 0;
+    ctxP.fillStyle = '#c9ffd6';
+    ctxP.font = `700 ${Math.floor(fontSize * 0.36)}px 'Courier New', monospace`;
+    ctxP.textBaseline = 'bottom';
+    ctxP.fillText('SCORE', boxX + padding, boxY - 4 + padding);
+
+    ctxP.restore();
+  } catch (e) {
+    // swallow drawing errors to avoid breaking the game loop
+    console.warn('drawCanvasScore error', e);
+  }
+}
+
 let timeLeft = 60; // 1 minute in seconds
 function drawTimer() {
   ctxP.fillStyle = '#ffffff';
@@ -288,6 +337,8 @@ function gameLoop() {
   drawHoop();
   updateHUD();
   drawTimer();
+  // draw the numeric score onto the GameBoy canvas
+  drawCanvasScore();
 
   // Update and draw the pumpkin
   for (let i = pumpkins.length - 1; i >= 0; i--) {
@@ -376,4 +427,25 @@ function resetGame() {
 // expose some functions for compatibility
 window.startPumpkin = startGame;
 window.resetPumpkin = resetGame;
+
+// Pumpkin help overlay toggle (DOM wiring)
+document.addEventListener('DOMContentLoaded', () => {
+  const helpBtn = document.getElementById('pumpkinHelpBtn');
+  const overlay = document.getElementById('pumpkinHelpOverlay');
+  const closeBtn = document.getElementById('pumpkinHelpClose');
+  if (!helpBtn || !overlay) return;
+  function openHelp() {
+    overlay.classList.remove('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
+    helpBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeHelp() {
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+    helpBtn.setAttribute('aria-expanded', 'false');
+  }
+  helpBtn.addEventListener('click', openHelp);
+  if (closeBtn) closeBtn.addEventListener('click', closeHelp);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeHelp(); });
+});
 
