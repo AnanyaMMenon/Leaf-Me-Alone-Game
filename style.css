@@ -42,9 +42,24 @@ h1 {
   text-shadow: 0 3px 8px rgba(0,0,0,0.35);
   display: inline-block;
   padding: 6px 14px;
-  background: rgba(255,255,255,0.85); /* subtle light backdrop to separate from busy backgrounds */
-  border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.06);
+  /* default boxed look removed for game pages via .game-page rules */
+}
+
+/* For game pages, show the title cleanly without the white box */
+.game-page .hud-panel h1,
+.game-page .game-panel header h1,
+.pumpkin-page .hud-panel h1 {
+  background: transparent !important;
+  padding: 6px 8px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  /* Fall-themed title: use a warm serif and near-black text for contrast */
+  color: #0b0b0b; /* near-black */
+  font-family: 'Merriweather', 'Georgia', serif;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  font-style: normal;
+  text-shadow: 0 2px 6px rgba(160,80,20,0.08); /* subtle warm shadow for depth */
 }
 
 .site-header {
@@ -310,12 +325,24 @@ canvas {
 .exit-log .flame { font-size: 18px; transform: translateY(-1px); }
 .exit-log small { font-size: 12px; opacity: 0.95; }
 
-/* position exit-log at bottom-right on game pages */
+/* position exit-log at bottom center on game pages */
 .game-wrap .exit-log {
   position: fixed;
-  right: 18px;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: 14px;
   z-index: 9999;
+}
+
+/* On wider viewports, place the exit button at the top-right corner for easier access */
+@media (min-width: 900px) {
+  .game-wrap .exit-log {
+    left: auto;
+    right: 18px;
+    top: 18px;
+    bottom: auto;
+    transform: none;
+  }
 }
 
 /* utility to keep words from breaking across lines */

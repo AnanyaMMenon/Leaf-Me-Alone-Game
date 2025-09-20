@@ -251,6 +251,17 @@
           setTimeout(function () { cspan.classList.add('visible'); if (idx % 6 === 0) blip(); }, interval * idx + 120);
         });
 
+        // allow Escape to reveal everything immediately
+        document.addEventListener('keydown', function escFastForward(e) {
+          if (e.key === 'Escape' || e.key === 'Esc') {
+            charList.forEach(function (cspan) { cspan.classList.add('visible'); });
+            var enter = document.getElementById('enterBtn');
+            if (enter) { enter.style.display = ''; enter.disabled = false; enter.classList.add('fade-in'); enter.focus(); }
+            // stop listening after used
+            document.removeEventListener('keydown', escFastForward);
+          }
+        });
+
         // after all letters revealed, show Enter with fade/slide
         var totalChars = Math.max(1, charList.length);
         var revealDuration = interval * totalChars + 120;

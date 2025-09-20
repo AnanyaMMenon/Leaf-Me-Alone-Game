@@ -525,19 +525,8 @@ canvas.addEventListener("mousemove", (e) => {
   basket.x = mouseX - basket.w / 2;
 });
 
-// sound toggle button wiring
+// leaf help overlay wiring
 document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('soundToggle');
-  if (!btn) return;
-  btn.textContent = soundEnabled ? '🔊' : '🔈';
-  btn.setAttribute('aria-pressed', soundEnabled ? 'true' : 'false');
-  btn.addEventListener('click', () => {
-    soundEnabled = !soundEnabled;
-    try { localStorage.setItem('leaf_sound', soundEnabled ? '1' : '0'); } catch (e) {}
-    btn.textContent = soundEnabled ? '🔊' : '🔈';
-    btn.setAttribute('aria-pressed', soundEnabled ? 'true' : 'false');
-  });
-  // leaf help overlay wiring
   const helpBtn = document.getElementById('leafHelpBtn');
   const overlay = document.getElementById('leafHelpOverlay');
   const closeBtn = document.getElementById('leafHelpClose');
